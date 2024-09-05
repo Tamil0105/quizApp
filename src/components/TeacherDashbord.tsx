@@ -98,7 +98,7 @@ const TeacherDashboard = () => {
 
   const createTest = async () => {
     try {
-      const response = await axios.post('http://localhost:8080/tests', newTest);
+      const response = await axios.post('https://quiz-server-gules.vercel.app/tests', newTest);
       console.log('Test created:', response.data);
     } catch (error) {
       console.error('Error creating test:', error);
@@ -108,7 +108,7 @@ const TeacherDashboard = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/tests');
+        const response = await axios.get('https://quiz-server-gules.vercel.app/tests');
         addTest(response.data);
       } catch (error) {
         console.error('Error fetching tests:', error);
@@ -211,7 +211,7 @@ const TeacherDashboard = () => {
   <div className="space-y-4">
     {tests.map((test) => (
       <div key={test.id} className="bg-white border border-gray-200 rounded-lg shadow-md p-4">
-        <h3 className="text-xl font-semibold mb-2">{test.name}</h3>
+        <h3 className="text-xl font-semibold mbuestion/5859a014-3742-4516-b028-03154d420756-2">{test.name}</h3>
         <div className="space-y-2">
           {test.questions.map((q) => (
             <div key={q.id} className="flex items-center justify-between bg-gray-100 p-2 rounded-lg">
