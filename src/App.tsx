@@ -15,7 +15,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
+        <Route path="/" element={<TeacherDashboard />} />
         <Route path="/question/:questionId" element={<QuestionPage />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         {/* Add other routes as needed */}
