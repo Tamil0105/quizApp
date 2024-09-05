@@ -4,6 +4,7 @@ import QuestionPage from './components/QuestionPage';
 import StudentDashboard from './components/StudentDashboard';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import TeacherDashboard from './components/TeacherDashbord';
+import Login from './components/Login';
 
 function App() {
   const initializeStore = useStore((state) => state.initializeStore);
@@ -15,7 +16,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<TeacherDashboard />} />
+       <Route path="/" element={<Login />} />
+        <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
         <Route path="/question/:questionId" element={<QuestionPage />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         {/* Add other routes as needed */}
