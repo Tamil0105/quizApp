@@ -1,6 +1,6 @@
 // components/QuestionPage.tsx
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
@@ -15,11 +15,10 @@ const QuestionPage = () => {
   const [testDuration, setTestDuration] = useState<number>(0);
   const [testTimer, setTestTimer] = useState<number>(0); // Total test timer
   const [isNotificationSupported, setIsNotificationSupported] = useState(false);
-  const navigate = useNavigate();
 
   const test = tests.find((test) => test.questions.some((q) => q.id === questionId));
   const currentQuestion = test?.questions[currentQuestionIndex];
-  const correctAnswers = test?.questions.map(q => ({ id: q.id, answer: q.answer }));
+//   const correctAnswers = test?.questions.map(q => ({ id: q.id, answer: q.answer }));
 
   useEffect(() => {
     if (test) {

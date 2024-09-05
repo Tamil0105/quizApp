@@ -13,7 +13,7 @@ const StudentDashboard = () => {
     setSelectedTest(testId);
     navigate(`/question/${testId}`); // Navigate to the test page
   };
-
+console.log(selectedTest)
   useEffect(() => {
     // Fetch all tests from the API
     const fetchTests = async () => {
