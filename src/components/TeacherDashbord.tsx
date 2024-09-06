@@ -98,7 +98,7 @@ const TeacherDashboard = () => {
 
   const createTest = async () => {
     try {
-      const response = await axios.post('https://quiz-server-gules.vercel.app/tests', newTest);
+      const response = await axios.post('https://quiz-server-sigma.vercel.app/tests', newTest);
       console.log('Test created:', response.data);
     } catch (error) {
       console.error('Error creating test:', error);
@@ -108,7 +108,7 @@ const TeacherDashboard = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const response = await axios.get('https://quiz-server-gules.vercel.app/tests');
+        const response = await axios.get('https://quiz-server-sigma.vercel.app/tests');
         addTest(response.data);
       } catch (error) {
         console.error('Error fetching tests:', error);

@@ -124,7 +124,7 @@ const QuestionPage = () => {
 
   const handleSubmitResponse = async() =>{
     try {
-        const response = await axios.post('https://quiz-server-gules.vercel.app/tests/add-res',{testId:test?.id,responses:test?.responses});
+        const response = await axios.post('https://quiz-server-sigma.vercel.app/tests/add-res',{testId:test?.id,responses:test?.responses});
         console.log(response.data);
         setShowResults(true);
         // addTest(response.data);

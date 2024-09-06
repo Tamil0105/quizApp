@@ -18,7 +18,7 @@ console.log(selectedTest)
     // Fetch all tests from the API
     const fetchTests = async () => {
       try {
-        const response = await axios.get('https://quiz-server-gules.vercel.app//tests');
+        const response = await axios.get('https://quiz-server-sigma.vercel.app/tests');
         console.log(response.data);
         addTest(response.data);
       } catch (error) {
