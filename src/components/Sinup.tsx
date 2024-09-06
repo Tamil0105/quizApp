@@ -23,7 +23,7 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/auth/signup', { email, password });
+      const response = await axios.post('https://quiz-server-sigma.vercel.app/auth/signup', { email, password });
       console.log('Sign-up response:', response.data);
 
       // Navigate to login page or another page after successful sign-up

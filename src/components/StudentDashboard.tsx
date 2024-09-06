@@ -48,7 +48,7 @@ console.log(selectedTest)
     const fetchTests = async () => {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.get('http://localhost:8080/tests', { headers });
+      const response = await axios.get('https://quiz-server-sigma.vercel.app/tests', { headers });
       addTest(response.data);
     };
     fetchTests();

@@ -25,7 +25,7 @@ const Login: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://localhost:8080/auth/login', { email, password });
+      const response = await axios.post('https://quiz-server-sigma.vercel.app/auth/login', { email, password });
       const token = response.data.access_token;
   
       // Store token in localStorage

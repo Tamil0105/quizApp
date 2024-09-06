@@ -46,7 +46,7 @@ console.log(test)
         const headers = { Authorization: `Bearer ${token}` };
 
         const response = await axios.get(
-          `http://localhost:8080/responses/test/${testId}`,
+          `https://quiz-server-sigma.vercel.app/responses/test/${testId}`,
           { headers }
         );
         const testData = response?.data?.responses;

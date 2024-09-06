@@ -104,7 +104,7 @@ const TeacherDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.post('http://localhost:8080/tests', newTest,{headers});
+      const response = await axios.post('https://quiz-server-sigma.vercel.app/tests', newTest,{headers});
       console.log('Test created:', response.data);
     } catch (error) {
       console.error('Error creating test:', error);
@@ -116,7 +116,7 @@ const TeacherDashboard = () => {
       try {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
-        const response = await axios.get('http://localhost:8080/tests',{headers});
+        const response = await axios.get('https://quiz-server-sigma.vercel.app/tests',{headers});
         addTest(response.data);
       } catch (error) {
         console.error('Error fetching tests:', error);

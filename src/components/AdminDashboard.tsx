@@ -12,7 +12,7 @@ const AdminDashboard: React.FC = () => {
     const fetchTests = async () => {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await axios.get('http://localhost:8080/tests', { headers });
+      const response = await axios.get('https://quiz-server-sigma.vercel.app/tests', { headers });
       setTests(response.data);
     };
     fetchTests();
@@ -21,7 +21,7 @@ const AdminDashboard: React.FC = () => {
   const handleCreateTest = async () => {
     const token = localStorage.getItem('token');
     const headers = { Authorization: `Bearer ${token}` };
-    await axios.post('http://localhost:8080/admin/tests', newTest, { headers });
+    await axios.post('https://quiz-server-sigma.vercel.app/admin/tests', newTest, { headers });
     setShowPopup(false);
     setNewTest({ name: '', duration: 0 });
   };
