@@ -1,32 +1,82 @@
-// components/QuestionPage.tsx
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useStore } from '../store/useStore';
-import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+const shuffleArray = (array: any[]) => {
+  let shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+};
 
 const QuestionPage = () => {
-  const { questionId } = useParams<{ questionId: string }>();
-  const { tests, setResponses } = useStore();
+  const { testId } = useParams<{ testId: string }>();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [testDuration, setTestDuration] = useState<number>(0);
-  const [testTimer, setTestTimer] = useState<number>(0); // Total test timer
-  const [isNotificationSupported, setIsNotificationSupported] = useState(false);
-
-  const test = tests.find((test) => test.questions.some((q) => q.id === questionId));
-  const currentQuestion = test?.questions[currentQuestionIndex];
-//   const correctAnswers = test?.questions.map(q => ({ id: q.id, answer: q.answer }));
+  const [testTimer, setTestTimer] = useState<number>(15);
+  const [test, setTest] = useState<any>(null);
+  const [shuffledQuestions, setShuffledQuestions] = useState<any[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (test) {
-      setTestDuration(test.duration);
-      setTestTimer(test.duration);
-      setTimeLeft(currentQuestion?.timer || 0);
+    const fetchTest = async () => {
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+      try {
+        const response = await axios.get(`https://quiz-server-sigma.vercel.app/tests/${testId}`, { headers });
+        const fetchedTest = response.data;
+        setTest(fetchedTest);
+        setTestDuration(fetchedTest.duration);
+        setTestTimer(fetchedTest.duration);
+        setTimeLeft(fetchedTest.questions[0]?.timer || 15);
+
+        // Shuffle questions and options
+        const shuffled = fetchedTest.questions.map((question: any) => ({
+          ...question,
+          options: shuffleArray(question.options),
+        }));
+        setShuffledQuestions(shuffled);
+      } catch (error) {
+        console.error('Error fetching test data:', error);
+      }
+    };
+
+    if (testId) {
+      fetchTest();
     }
-  }, [test, currentQuestion]);
+  }, [testId]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken: any = parseJwt(token);
+        console.log(decodedToken)
+
+        setUserId(decodedToken.sub);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+      }
+    }
+  }, []);
+console.log(userId)
+  const saveResponse = (questionId: string, selectedOption: string) => {
+    const existingResponses = JSON.parse(localStorage.getItem(`test-${testId}-responses`) || '[]');
+    const updatedResponses = [...existingResponses, { questionId, selectedOption }];
+    localStorage.setItem(`test-${testId}-responses`, JSON.stringify(updatedResponses));
+  };
+
+  useEffect(() => {
+    const savedResponses = JSON.parse(localStorage.getItem(`test-${testId}-responses`) || '[]');
+    if (savedResponses.length > 0) {
+      setCurrentQuestionIndex(savedResponses.length);
+      setSelectedOption(null);
+    }
+  }, [testId]);
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -46,159 +96,156 @@ const QuestionPage = () => {
     }
   }, [testTimer]);
 
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        // Tab is not focused
-        if (isNotificationSupported) {
-          new Notification('You have switched tabs!', {
-            body: 'The test will be closed if you do not return to the tab.',
-          });
-        }
-        // Close the test or navigate away
-        handleCloseTest();
-      }
-    };
-
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = '';
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    // Check if the Notification API is supported
-    if ('Notification' in window) {
-      setIsNotificationSupported(Notification.permission === 'granted' || Notification.permission === 'default');
-    }
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [isNotificationSupported]);
-
-  const handleOptionChange = (option: string) => {
+  const handleOptionChange = (option: any) => {
     setSelectedOption(option);
   };
 
   const handleNextQuestion = () => {
-    if (currentQuestionIndex < (test?.questions.length || 0) - 1) {
-      // Save the selected answer
+    if (currentQuestionIndex < (shuffledQuestions.length || 0) - 1) {
       if (selectedOption !== null && test) {
-        const updatedResponses = test.questions.map((question) => ({
-          questionId: question.id,
-          selectedOption: question.id === currentQuestion?.id ? selectedOption : '',
-        }));
-        setResponses(test.id, updatedResponses);
+        saveResponse(shuffledQuestions[currentQuestionIndex]?.id, selectedOption);
       }
-      // Move to next question
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
-      setTimeLeft(test?.questions[currentQuestionIndex + 1]?.timer || 0);
+      setTimeLeft(shuffledQuestions[currentQuestionIndex + 1]?.timer || 0);
     } else {
-      // End of the test
+      // Final question, trigger submission
       if (selectedOption !== null && test) {
-        const updatedResponses = test.questions.map((question) => ({
-          questionId: question.id,
-          selectedOption: question.id === currentQuestion?.id ? selectedOption : '',
-        }));
-        setResponses(test.id, updatedResponses);
+        saveResponse(shuffledQuestions[currentQuestionIndex]?.id, selectedOption);
       }
-      setShowResults(true);
+      handleSubmitResponse();
     }
   };
 
   const handleRestart = () => {
     setCurrentQuestionIndex(0);
     setSelectedOption(null);
-    setTimeLeft(test?.questions[0]?.timer || 0);
+    setTimeLeft(shuffledQuestions[0]?.timer || 0);
     setTestTimer(testDuration);
     setShowResults(false);
+    localStorage.removeItem(`test-${testId}-responses`);
   };
 
-  const handleCloseTest = () => {
-    setShowResults(true)
-  };
-
-  const handleSubmitResponse = async() =>{
-    try {
-        const response = await axios.post('https://quiz-server-sigma.vercel.app/tests/add-res',{testId:test?.id,responses:test?.responses});
-        console.log(response.data);
-        setShowResults(true);
-        // addTest(response.data);
-      } catch (error) {
-        console.error('Error fetching tests:', error);
+  const calculateMarks = (responses: any[]) => {
+    let totalMarks = 0;
+    responses.forEach((response: { questionId: string; selectedOption: string }) => {
+      const question = shuffledQuestions.find((q: { id: string }) => q.id === response.questionId);
+      if (question) {
+        if (response.selectedOption === question.answer) {
+          totalMarks += 2; // Correct answer
+        } else {
+          totalMarks -= 1; // Incorrect answer
+        }
       }
+    });
+    return totalMarks;
+  };
 
-  }
+  const handleSubmitResponse = async () => {
+    const responses = JSON.parse(localStorage.getItem(`test-${testId}-responses`) || '[]');
+  
+    if (selectedOption !== null && test) {
+      saveResponse(shuffledQuestions[currentQuestionIndex]?.id, selectedOption);
+    }
+  
+    try {
+      const totalMarks = calculateMarks(responses);
+      const passMark = (test?.passMark || 0) * 0.7; // Assuming passMark is a percentage
+      const passed = totalMarks >= passMark;
+  
+      const processedResponses = responses.map((response: { questionId: string; selectedOption: string }) => ({
+        questionId: response.questionId,
+        testId: testId,
+        userId: userId,
+        selectedOption: response.selectedOption,
+      }));
+  
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+  
+      const response = await axios.post('http://localhost:8080/responses', {
+        testId: test?.id,
+        userMarks: {
+          userId:userId,
+          testId: test?.id,
+          marks: totalMarks,
+          pass: passed,
+          timeTaken: testDuration - testTimer // Total time taken for the test
+        },
+        responses: processedResponses,
+        totalMarks
+      }, { headers });
+  
+      console.log(response.data);
+      setShowResults(true);
+    } catch (error) {
+      console.error('Error submitting responses:', error);
+    }
+  };
+
+
   if (showResults) {
+    const finalResponses = JSON.parse(localStorage.getItem(`test-${testId}-responses`) || '[]');
     return (
       <div className="p-6 bg-gray-100 min-h-screen">
         <h1 className="text-3xl font-bold mb-4">Quiz Completed!</h1>
         <h2 className="text-2xl font-semibold mb-4">Results:</h2>
-        {test?.questions.map((question) => (
+        {shuffledQuestions.map((question: any) => (
           <div key={question.id} className="bg-white border border-gray-300 rounded-lg shadow-md p-4 mb-4">
-            <h3 className="text-xl font-semibold mb-2">{question.question}</h3>
-            <p className="text-gray-700 mb-2">Your Answer: {test.responses.find(r => r.questionId === question.id)?.selectedOption || 'N/A'}</p>
+            <h3 className="text-xl font-semibold mb-2">Question {shuffledQuestions.findIndex((q: { id: any; }) => q.id === question.id) + 1}:</h3>
+            <p className="text-gray-700 mb-2">Your Answer: {finalResponses.find((r: { questionId: any; }) => r.questionId === question.id)?.selectedOption || 'N/A'}</p>
             <p className="text-green-600">Correct Answer: {question.answer}</p>
           </div>
         ))}
-        <button onClick={handleRestart} className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 transition duration-300">
+        <div className="bg-white border border-gray-300 rounded-lg shadow-md p-4 mb-4">
+          <h3 className="text-xl font-semibold mb-2">Total Marks:</h3>
+          <p className="text-gray-700">Your Score: {calculateMarks(finalResponses)}</p>
+          <p className="text-gray-700">Passed: {calculateMarks(finalResponses) >= (test?.passMark || 0) * 0.7 ? 'Yes' : 'No'}</p>
+        </div>
+        <button onClick={handleRestart} className="bg-blue-500 text-white px-4 py-2 rounded-lg">
           Restart Test
         </button>
       </div>
     );
   }
 
-  if (!currentQuestion) {
-    return <div className="p-6 bg-gray-100 min-h-screen">Loading...</div>;
-  }
+  if (!test) return <div>Loading...</div>;
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold mb-4">{currentQuestion.question}</h1>
-      <div className="space-y-2 mb-4">
-        <AnimatePresence>
-          <motion.div
-            key={currentQuestion.id}
-            initial={{ opacity: 0, x: 0 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            transition={{ duration: 0.2 }}
-            className="p-4 bg-white border border-gray-300 rounded-lg shadow-md"
+      <h1 className="text-3xl font-bold mb-4">{test.name}</h1>
+      <div className="bg-white border border-gray-300 rounded-lg shadow-md p-4 mb-4">
+        <h2 className="text-2xl font-semibold mb-4">
+          Question {currentQuestionIndex + 1} of {shuffledQuestions.length}
+        </h2>
+        <p className="text-gray-700 mb-4">{shuffledQuestions[currentQuestionIndex]?.question}</p>
+        {shuffledQuestions[currentQuestionIndex]?.options.map((option: any) => (
+          <button
+            key={option}
+            onClick={() => handleOptionChange(option)}
+            className={`block w-full text-left px-4 py-2 rounded-lg mb-2 ${selectedOption === option ? 'bg-blue-500 text-white' : 'bg-white border border-gray-300'}`}
           >
-            {currentQuestion.options.map((option, index) => (
-              <div key={index} className="flex items-center space-x-2 mb-2">
-                <input
-                  type="radio"
-                  name={`question-${currentQuestionIndex}`}
-                  value={option}
-                  checked={selectedOption === option}
-                  onChange={() => handleOptionChange(option)}
-                  className="form-radio text-blue-500"
-                />
-                <label className="text-lg">{option}</label>
-              </div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
+            {option}
+          </button>
+        ))}
+        <p className="text-gray-700 mb-4">Time left: {timeLeft}s</p>
+        <button onClick={handleNextQuestion} className="bg-blue-500 text-white px-4 py-2 rounded-lg">
+          {currentQuestionIndex < (shuffledQuestions.length || 0) - 1 ? 'Next Question' : 'Submit Test'}
+        </button>
       </div>
-
-      <div className="mb-4">
-        <p className="text-gray-700 mb-2">Time left for this question: <span className="font-semibold">{timeLeft} seconds</span></p>
-        <p className="text-gray-700">Total time left for the test: <span className="font-semibold">{testTimer} seconds</span></p>
-      </div>
-
-      <button
-        onClick={currentQuestionIndex < (test?.questions.length || 0) - 1?handleNextQuestion:handleSubmitResponse}
-        className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 transition duration-300"
-      >
-        {currentQuestionIndex < (test?.questions.length || 0) - 1 ? 'Next Question' : 'Submit Test'}
-      </button>
+      <p className="text-gray-700">Total Time: {testDuration}s</p>
+      <p className="text-gray-700">Time Remaining: {testTimer}s</p>
     </div>
   );
 };
 
 export default QuestionPage;
+function parseJwt (token:any) {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+}

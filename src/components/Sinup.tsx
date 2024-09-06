@@ -2,42 +2,35 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-// Function to parse JWT
-function parseJwt(token: any) {
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
-
-  return JSON.parse(jsonPayload);
-}
-
-const Login: React.FC = () => {
+const SignUp: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    // Basic validation
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:8080/auth/login', { email, password });
-      const token = response.data.access_token;
-  
-      // Store token in localStorage
-      localStorage.setItem('token', token);
-      const decodedToken = parseJwt(token);
-      console.log('Decoded token:', decodedToken);
-  
-      // Navigate based on the user role from the decoded token
-      navigate(decodedToken.role === 'STUDENT' ? '/student-dashboard' : '/teacher-dashboard');
+      const response = await axios.post('http://localhost:8080/auth/signup', { email, password });
+      console.log('Sign-up response:', response.data);
+
+      // Navigate to login page or another page after successful sign-up
+      navigate('/login');
     } catch (error) {
-      setError('Login failed. Please check your credentials and try again.');
-      console.error('Login error:', error);
+      setError('Sign-up failed. Please check your credentials and try again.');
+      console.error('Sign-up error:', error);
     } finally {
       setLoading(false);
     }
@@ -46,8 +39,8 @@ const Login: React.FC = () => {
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg">
-        <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
-        <form onSubmit={handleLogin}>
+        <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
+        <form onSubmit={handleSignUp}>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700" htmlFor="email">Email</label>
             <input
@@ -72,6 +65,18 @@ const Login: React.FC = () => {
               required
             />
           </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700" htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+              required
+            />
+          </div>
           {error && <div className="text-red-600 mb-4">{error}</div>}
           <button
             type="submit"
@@ -84,7 +89,7 @@ const Login: React.FC = () => {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4h4a8 8 0 01-8 8v-4z"></path>
               </svg>
             ) : (
-              'Login'
+              'Sign Up'
             )}
           </button>
         </form>
@@ -93,4 +98,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default SignUp;

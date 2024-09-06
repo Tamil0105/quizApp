@@ -9,8 +9,14 @@ type Question = {
 };
 
 type Response = {
+  id: string; // Unique identifier for the response
   questionId: string;
+  testId: string;
+  userId: string;
   selectedOption: string;
+  marks: number; // Marks obtained for the question
+  pass: boolean; // Whether the student passed or failed
+  timeTaken: number; // Time taken for the response (in seconds)
 };
 
 type Test = {
@@ -23,9 +29,8 @@ type Test = {
 
 type StoreState = {
   tests: Test[];
-  responses:Response[];
   addQuestion: (testId: string, question: Question) => void;
-  addTest: (test: Test[]) => void;
+  addTest: (tests: Test[]) => void;
   setTest: (updatedTest: Test) => void;
   setResponses: (testId: string, responses: Response[]) => void;
   getTestResponses: (questionId: string) => Response[];
@@ -34,11 +39,9 @@ type StoreState = {
 
 const useStore = create<StoreState>((set) => ({
   tests: [],
-responses:[],
-  // Add a new test
+
   // Add multiple tests with duplicate check
   addTest: (tests) => set((state) => {
-    // Filter out duplicates
     const existingTestIds = new Set(state.tests.map(test => test.id));
     const existingTestNames = new Set(state.tests.map(test => test.name));
 
@@ -53,6 +56,7 @@ responses:[],
 
     return { tests: [...state.tests, ...uniqueTests] };
   }),
+
   // Update an existing test or add a new one if it doesn't exist
   setTest: (updatedTest) => set((state) => {
     const testIndex = state.tests.findIndex(test => test.id === updatedTest.id);
@@ -97,6 +101,7 @@ responses:[],
   initializeStore: () => {
     set({
       tests: [
+        // Example data
         // {
         //   id: 'test1',
         //   name: 'Sample Test',
