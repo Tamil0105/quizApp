@@ -38,7 +38,7 @@ const TestAnalytics = () => {
     failedCount: 0,
   });
   const [loading, setLoading] = useState(true);
-
+console.log(test)
   useEffect(() => {
     const fetchTestAnalytics = async () => {
       try {
@@ -53,7 +53,6 @@ const TestAnalytics = () => {
 
         setTest(testData[0].test);
         setResponses(testData);
-        const res = response?.data?.response;
 
         const totalQuestions = testData[0].test.questions.length;
 

@@ -54,9 +54,7 @@ console.log(selectedTest)
     fetchTests();
   }, []);
 
-  const attendTest = (testId: string) => {
-    // Redirect to test page
-  };
+  
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-4">Student Dashboard</h1>

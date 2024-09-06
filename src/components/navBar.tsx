@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
-  const [darkMode, setDarkMode] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -12,10 +11,7 @@ const Navbar: React.FC = () => {
     navigate('/');
   };
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.documentElement.classList.toggle('dark', !darkMode);
-  };
+
 
   // Determine user role
   const token = localStorage.getItem('token');
@@ -31,7 +27,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav
-      className={`bg-white dark:bg-gray-800 p-4 shadow-md sticky top-0 z-50 ${darkMode ? 'dark' : ''}`}
+      className={`bg-white dark:bg-gray-800 p-4 shadow-md sticky top-0 z-50 `}
     >
       <div className="container mx-auto flex items-center justify-between">
         <Link to="/" className="text-xl font-semibold text-gray-900 dark:text-white">
