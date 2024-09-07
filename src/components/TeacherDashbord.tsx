@@ -29,7 +29,7 @@ type Response = {
 };
 
 const TeacherDashboard = () => {
-  const { addTest,setTests, tests } = useStore();
+  const { addTest, tests } = useStore();
   const [loading, setLoading] = useState(true);  // State for loading
   const [testName, setTestName] = useState('');
   const [durationUnit, setDurationUnit] = useState('seconds'); // seconds, minutes, hours
