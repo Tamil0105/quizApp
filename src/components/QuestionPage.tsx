@@ -38,10 +38,8 @@ const QuestionPage = () => {
   const [test, setTest] = useState<any>(null);
   const [shuffledQuestions, setShuffledQuestions] = useState<any[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
-  const [switchCount, setSwitchCount] = useState(0);
   const [tabSwitchCount, setTabSwitchCount] = useState(0);
   const [isTabFocused, setIsTabFocused] = useState(true);
-  const tabFocusRef = useRef(true);
   useEffect(() => {
     const fetchTest = async () => {
       const token = localStorage.getItem('token');
