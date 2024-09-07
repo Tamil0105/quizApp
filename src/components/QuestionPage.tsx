@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -16,6 +16,7 @@ const formatTime = (seconds: number): string => {
   const remainingSeconds = seconds % 60;
   return `${minutes}m ${remainingSeconds}s`;
 };
+
 function parseJwt(token: any) {
   var base64Url = token.split('.')[1];
   var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -25,6 +26,7 @@ function parseJwt(token: any) {
 
   return JSON.parse(jsonPayload);
 }
+
 const QuestionPage = () => {
   const { testId } = useParams<{ testId: string }>();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -36,7 +38,10 @@ const QuestionPage = () => {
   const [test, setTest] = useState<any>(null);
   const [shuffledQuestions, setShuffledQuestions] = useState<any[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
-
+  const [switchCount, setSwitchCount] = useState(0);
+  const [tabSwitchCount, setTabSwitchCount] = useState(0);
+  const [isTabFocused, setIsTabFocused] = useState(true);
+  const tabFocusRef = useRef(true);
   useEffect(() => {
     const fetchTest = async () => {
       const token = localStorage.getItem('token');
@@ -64,7 +69,16 @@ const QuestionPage = () => {
       fetchTest();
     }
   }, [testId]);
-
+  useEffect(() => {
+    if (!isTabFocused) {
+      // Notify user when tab is not focused
+      if (Notification.permission === 'granted') {
+        new Notification('Reminder', {
+          body: 'Don\'t forget to return to the quiz!',
+        });
+      }
+    }
+  }, [isTabFocused]);
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -108,6 +122,25 @@ const QuestionPage = () => {
       return () => clearTimeout(timer);
     }
   }, [testTimer]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setIsTabFocused(true);
+      } else {
+        setIsTabFocused(false);
+        setTabSwitchCount((prevCount) => prevCount + 1);
+        if (tabSwitchCount >= 2) {
+          handleSubmitResponse();
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [tabSwitchCount]);
 
   const handleOptionChange = (option: any) => {
     setSelectedOption(option);
@@ -197,64 +230,80 @@ const QuestionPage = () => {
   };
 
   if (showResults) {
-    const finalResponses = JSON.parse(localStorage.getItem(`test-${testId}-responses`) || '[]');
+const finalResponses = JSON.parse(localStorage.getItem(`test-${testId}-responses`) || '[]');
+    const totalMarks = calculateMarks(finalResponses);
     return (
-      <div className="p-6 bg-gray-100 min-h-screen">
-        <h1 className="text-3xl font-bold mb-4">Quiz Completed!</h1>
-        <h2 className="text-2xl font-semibold mb-4">Results:</h2>
+      <div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center">
+      <h1 className="text-3xl font-bold mb-4 text-gray-800">Quiz Completed!</h1>
+      <h2 className="text-2xl font-semibold mb-6 text-gray-700">Results:</h2>
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">Results</h1>
+        <p className="text-lg text-gray-600 mb-2">
+          <span className="font-semibold">Total Marks:</span> {totalMarks}
+        </p>
+        <p className={`text-lg font-semibold mb-4 ${totalMarks >= (test?.passMark || 0) * 0.7 ? 'text-green-600' : 'text-red-600'}`}>
+          {totalMarks >= (test?.passMark || 0) * 0.7 ? 'Congratulations, you passed!' : 'Sorry, you failed.'}
+        </p>
+      </div>
+    
+      <div className="w-full max-w-md mt-8">
         {shuffledQuestions.map((question: any) => (
           <div key={question.id} className="bg-white border border-gray-300 rounded-lg shadow-md p-4 mb-4">
-            <h3 className="text-xl font-semibold mb-2">Question {shuffledQuestions.findIndex((q: { id: any; }) => q.id === question.id) + 1}:</h3>
-            <p className="text-gray-700 mb-2">Your Answer: {finalResponses.find((r: { questionId: any; }) => r.questionId === question.id)?.selectedOption || 'N/A'}</p>
+            <h3 className="text-xl font-semibold mb-2 text-gray-800">
+              Question {shuffledQuestions.findIndex((q: { id: any; }) => q.id === question.id) + 1}:
+            </h3>
+            <p className="text-gray-700 mb-2">
+              Your Answer: {finalResponses.find((r: { questionId: any; }) => r.questionId === question.id)?.selectedOption || 'N/A'}
+            </p>
             <p className="text-green-600">Correct Answer: {question.answer}</p>
           </div>
         ))}
-        <div className="bg-white border border-gray-300 rounded-lg shadow-md p-4 mb-4">
-          <h3 className="text-xl font-semibold mb-2">Total Marks: {calculateMarks(finalResponses)}</h3>
-          <p className="text-xl font-semibold mb-2">Pass/Fail: {calculateMarks(finalResponses) >= (test?.passMark || 0) * 0.7 ? 'Pass' : 'Fail'}</p>
-          <p className="text-xl font-semibold mb-2">Time Taken: {formatTime(testDuration - testTimer)}</p>
-        </div>
-        <button onClick={handleRestart} className="bg-blue-500 text-white py-2 px-4 rounded">Restart Quiz</button>
       </div>
+    
+      <div className="mt-6">
+        <button onClick={handleRestart} className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+          Restart Quiz
+        </button>
+      </div>
+    </div>
+    
     );
   }
 
-  if (!test) {
-    return <div>Loading...</div>;
-  }
+  if (!test) return <div>Loading...</div>;
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-4">{test.name}</h1>
-      <h2 className="text-2xl font-semibold mb-4">Question {currentQuestionIndex + 1}:</h2>
       <div className="bg-white border border-gray-300 rounded-lg shadow-md p-4 mb-4">
-        <p className="text-lg mb-4">{shuffledQuestions[currentQuestionIndex]?.question}</p>
-        {shuffledQuestions[currentQuestionIndex]?.options.map((option: any, index: number) => (
-          <div key={index} className="flex items-center mb-2">
-            <input
-              type="radio"
-              id={`option-${index}`}
-              name="options"
-              value={option}
-              checked={selectedOption === option}
-              onChange={() => handleOptionChange(option)}
-              className="mr-2"
-            />
-            <label htmlFor={`option-${index}`} className="text-gray-700">{option}</label>
-          </div>
-        ))}
+        <h2 className="text-xl font-semibold mb-2">Question {currentQuestionIndex + 1}:</h2>
+        <p className="text-gray-700 mb-4">{shuffledQuestions[currentQuestionIndex]?.question}</p>
+        <div className="space-y-2">
+          {shuffledQuestions[currentQuestionIndex]?.options.map((option: any, index: number) => (
+            <button
+              key={index}
+              onClick={() => handleOptionChange(option)}
+              className={`w-full text-left px-4 py-2 rounded-lg border ${
+                selectedOption === option ? 'bg-blue-500 text-white' : 'bg-white border-gray-300'
+              } hover:bg-blue-100`}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+        <div className="flex justify-between mt-4">
+          <p className="text-gray-600">Time Left: {formatTime(timeLeft)}</p>
+          <button
+            onClick={handleNextQuestion}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600"
+          >
+            {currentQuestionIndex < (shuffledQuestions.length - 1) ? 'Next Question' : 'Submit Test'}
+          </button>
+        </div>
       </div>
-      <div className="flex items-center mb-4">
-        <span className="text-xl font-semibold mr-4">Time Left: {formatTime(timeLeft)}</span>
-        <span className="text-xl font-semibold">Test Timer: {formatTime(testTimer)}</span>
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-300 p-4 text-center">
+        <p className="text-gray-600">Test Duration: {formatTime(testTimer)}</p>
       </div>
-      <button
-        onClick={handleNextQuestion}
-        className="bg-blue-500 text-white py-2 px-4 rounded"
-        disabled={selectedOption === null}
-      >
-        Next Question
-      </button>
     </div>
   );
 };
