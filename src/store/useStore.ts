@@ -22,6 +22,7 @@ type Response = {
 type Test = {
   id: string;
   name: string;
+  category:string
   questions: Question[];
   duration: number; // Total duration of the test
   responses: Response[];
@@ -32,6 +33,7 @@ type StoreState = {
   addQuestion: (testId: string, question: Question) => void;
   addTest: (tests: Test[]) => void;
   setTest: (updatedTest: Test) => void;
+  setTests: () => void;
   setResponses: (testId: string, responses: Response[]) => void;
   getTestResponses: (questionId: string) => Response[];
   initializeStore: () => void;
@@ -40,6 +42,9 @@ type StoreState = {
 const useStore = create<StoreState>((set) => ({
   tests: [],
 
+  setTests :() =>set((state) =>{
+    return {...state, tests: []}
+  }),
   // Add multiple tests with duplicate check
   addTest: (tests) => set((state) => {
     const existingTestIds = new Set(state.tests.map(test => test.id));
@@ -54,7 +59,7 @@ const useStore = create<StoreState>((set) => ({
       return state; // No unique tests to add
     }
 
-    return { tests: [...state.tests, ...uniqueTests] };
+    return { tests: [...uniqueTests] };
   }),
 
   // Update an existing test or add a new one if it doesn't exist

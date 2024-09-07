@@ -3,7 +3,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const SignUp: React.FC = () => {
+  const [name, setName] = useState(''); // New name state
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,11 +25,16 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('https://quiz-server-sigma.vercel.app/auth/signup', { email, password });
+      const response = await axios.post('https://quiz-server-sigma.vercel.app/auth/signup', { 
+        name, // Include the name in the API request
+        email, 
+        phoneNumber:phone, 
+        password,
+        role: 'STUDENT', // Set the role to 'student' by default
+      });
       console.log('Sign-up response:', response.data);
-
       // Navigate to login page or another page after successful sign-up
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       setError('Sign-up failed. Please check your credentials and try again.');
       console.error('Sign-up error:', error);
@@ -42,6 +49,18 @@ const SignUp: React.FC = () => {
         <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
         <form onSubmit={handleSignUp}>
           <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700" htmlFor="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+              required
+            />
+          </div>
+          <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700" htmlFor="email">Email</label>
             <input
               type="email"
@@ -49,6 +68,18 @@ const SignUp: React.FC = () => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700" htmlFor="phone">Phone Number</label>
+            <input
+              type="text"
+              id="phone"
+              placeholder="Phone Number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
               required
             />
