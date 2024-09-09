@@ -3,7 +3,7 @@ import { IoIosArrowBack } from "react-icons/io"; // Arrow back icon
 import { FaPlus, FaEdit, FaTrashAlt } from "react-icons/fa"; // Plus, Edit, Delete icons
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid"; // Import uuidv4
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 
 type Question = {
   id: string;
@@ -39,7 +39,7 @@ const CreateTestPage: React.FC = () => {
   const [editIndex, setEditIndex] = useState<number | null>(null); // For tracking which question is being edited
   const [errors, setErrors] = useState<string[]>([]);
   const { course } = useParams<{ course: string }>();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleAddOption = () => {
     if (newOption && options.length < 6) {
