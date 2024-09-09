@@ -67,7 +67,7 @@ const SignUp: React.FC = () => {
                 placeholder="Full Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-600 sm:text-sm"
                 required
               />
             </div>
@@ -79,7 +79,7 @@ const SignUp: React.FC = () => {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-600 sm:text-sm"
                 required
               />
             </div>
@@ -91,7 +91,7 @@ const SignUp: React.FC = () => {
                 placeholder="Phone Number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-600 sm:text-sm"
                 required
               />
             </div>
@@ -103,7 +103,7 @@ const SignUp: React.FC = () => {
                 placeholder="College Name"
                 value={collegeName}
                 onChange={(e) => setCollegeName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-600 sm:text-sm"
                 required
               />
             </div>
@@ -113,7 +113,7 @@ const SignUp: React.FC = () => {
                 id="department"
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-600 sm:text-sm"
                 required
               >
                 <option value="EEE">EEE</option>
@@ -129,7 +129,7 @@ const SignUp: React.FC = () => {
                 placeholder="Graduation Year (e.g., 2025)"
                 value={graduationYear}
                 onChange={(e) => setGraduationYear(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-600 sm:text-sm"
                 required
               />
             </div>
@@ -141,7 +141,7 @@ const SignUp: React.FC = () => {
                 placeholder="Register No"
                 value={registerNo}
                 onChange={(e) => setRegisterNo(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-600 sm:text-sm"
                 required
               />
             </div>
@@ -154,7 +154,7 @@ const SignUp: React.FC = () => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-600 sm:text-sm"
               required
             />
           </div>
@@ -166,30 +166,49 @@ const SignUp: React.FC = () => {
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-teal-600 sm:text-sm"
               required
             />
           </div>
           {error && <div className="text-red-600 mb-4 text-center">{error}</div>}
           <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {loading ? (
-              <svg className="w-5 h-5 mx-auto animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4h4a8 8 0 01-8 8v-4z"></path>
-              </svg>
-            ) : (
-              'Sign Up'
-            )}
-          </button>
+  type="submit"
+  disabled={loading}
+  className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-600 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+>
+  {loading ? (
+    <div className="flex justify-center">
+      <svg
+        className="w-6 h-6 animate-spin text-white"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        />
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4h4a8 8 0 01-8 8v-4z"
+        />
+      </svg>
+    </div>
+  ) : (
+    'Sign Up'
+  )}
+</button>
+
           <div className="mt-4 text-center">
             <button
               type="button"
               onClick={handleLoginRedirect}
-              className="text-blue-600 hover:underline"
+              className="text-teal-600 hover:underline"
             >
               Already have an account? Log in
             </button>

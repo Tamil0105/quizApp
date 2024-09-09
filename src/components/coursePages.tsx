@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { AiOutlineDesktop } from 'react-icons/ai';
 import { GiMechanicGarage } from 'react-icons/gi';
 import { MdComputer } from 'react-icons/md';
+import { GiBrickWall } from 'react-icons/gi'; // Add icon for Civil Engineering
+import { useStore } from '../store/useStore';
 
 interface User {
     role?: string;
@@ -18,17 +20,17 @@ function parseJwt(token: any) {
     }).join(''));
   
     return JSON.parse(jsonPayload);
-  }
+}
+
 const CoursePage: React.FC = () => {
+    const { setTests } = useStore();
+
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        // Fetch token from localStorage
         const token = localStorage.getItem('token');
-
         if (token) {
             try {
-                // Decode the token to get user data
                 const decodedToken: any = parseJwt(token);
                 setUser(decodedToken);
             } catch (error) {
@@ -38,7 +40,7 @@ const CoursePage: React.FC = () => {
     }, []);
 
     if (!user) {
-        return <div>Loading...</div>; // Handle loading state if needed
+        return <div>Loading...</div>;
     }
 
     const isAdmin = user?.role === 'ADMIN';
@@ -48,6 +50,7 @@ const CoursePage: React.FC = () => {
             { path: 'eee', icon: <AiOutlineDesktop className="text-6xl mb-4" />, label: 'EEE', borderColor: 'border-blue-300', backgroundImage: '/path-to-your-pattern1.png' },
             { path: 'mech', icon: <GiMechanicGarage className="text-6xl mb-4" />, label: 'MECH', borderColor: 'border-red-300', backgroundImage: '/path-to-your-pattern2.png' },
             { path: 'ece', icon: <MdComputer className="text-6xl mb-4" />, label: 'ECE', borderColor: 'border-green-300', backgroundImage: '/path-to-your-pattern3.png' },
+            { path: 'civil', icon: <GiBrickWall className="text-6xl mb-4" />, label: 'Civil', borderColor: 'border-yellow-300', backgroundImage: '/path-to-your-pattern4.png' } // Added Civil course
         ]
         : [
             { path: user?.department, icon: <AiOutlineDesktop className="text-6xl mb-4" />, label: (user as any)?.department.toUpperCase(), borderColor: 'border-blue-300', backgroundImage: '/path-to-your-pattern1.png' },
@@ -61,9 +64,11 @@ const CoursePage: React.FC = () => {
                     {isAdmin ? 'Select a Course' : `Department: ${(user as any)?.department.toUpperCase()}`}
                 </h2>
             </div>
-            <div className={`grid grid-cols-1 md:grid-cols-${isAdmin ? '3' : '1'} gap-6`}>
+            <div className={`grid grid-cols-2 lg:grid-cols-4 md:grid-cols-${isAdmin ? '4' : '1'} gap-6`}>
                 {courses.map((course, index) => (
-                    <Link to={ isAdmin?`/teacher-dashboard/course/${course.path}`:`/student-dashboard/course/${course.path}`} key={index} className="folder-card">
+                    <Link onClick={() =>{
+                        setTests()
+                    }} to={ isAdmin?`/teacher-dashboard/course/${course.path}`:`/student-dashboard/course/${course.path}`} key={index} className="folder-card">
                         <div
                             className={`flex flex-col items-center p-8 bg-white border ${course.borderColor} rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105`}
                             style={{ backgroundImage: `url(${course.backgroundImage})`, backgroundSize: 'cover' }}

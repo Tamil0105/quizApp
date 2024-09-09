@@ -127,12 +127,10 @@ const CreateTestPage: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post("https://quiz-server-sigma.vercel.app/tests", newTest, {
+      await axios.post("http://localhost:8080/tests", newTest, {
         headers,
       });
-      navigate(
-        `https://quiz-app-virid-five.vercel.app/teacher-dashboard/course/${course}`
-      );
+   
       console.log("Test created");
     } catch (error) {
       console.error("Error creating test:", error);
@@ -171,7 +169,7 @@ const CreateTestPage: React.FC = () => {
             </button>
             <button
               onClick={handleSaveTest}
-              className="bg-purple-500 text-white rounded-lg p-2 hover:bg-purple-600"
+              className="bg-teal-600 text-white rounded-lg p-2 hover:bg-teal-700"
             >
               Save Test
             </button>
@@ -269,7 +267,7 @@ const CreateTestPage: React.FC = () => {
 
         <button
           onClick={handleCreateQuestion}
-          className="bg-purple-500 text-white rounded-lg p-2 hover:bg-purple-600 w-full"
+          className="bg-teal-600 text-white rounded-lg p-2 hover:bg-teal-700 w-full"
         >
           {editIndex !== null ? "Update Question" : "Add Question"}
         </button>

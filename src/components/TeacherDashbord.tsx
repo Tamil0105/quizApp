@@ -41,7 +41,7 @@ const TeacherDashboard = () => {
   };
 
   return (
-    <div className="max-w-7xl py-2 mx-auto bg-white rounded-lg">
+    <div className="max-w-7xl py-2 px-2  mx-auto bg-white rounded-lg">
       <h1 className="text-3xl font-bold mb-6">Teacher Dashboard</h1>
 
       <div className="mb-6    flex space-x-4 relative">
@@ -52,7 +52,7 @@ const TeacherDashboard = () => {
     onClick={() => setActiveTab('test')}
     className={`px-4 py-2 text-sm rounded-lg transition-transform duration-300 ease-in-out ${
       activeTab === 'test'
-        ? 'bg-purple-600 text-white shadow-lg shadow-purple-400'
+        ? 'bg-teal-600 text-white shadow-lg shadow-purple-400'
         : 'bg-gray-300 text-gray-700 hover:bg-gray-400 hover:text-gray-900'
     }`}
   >
@@ -64,7 +64,7 @@ const TeacherDashboard = () => {
     onClick={() => setActiveTab('report')}
     className={`px-4 py-2 text-sm rounded-lg transition-transform duration-300 ease-in-out ${
       activeTab === 'report'
-        ? 'bg-purple-600 text-white shadow-lg shadow-purple-400'
+        ? 'bg-teal-600 text-white shadow-lg shadow-purple-400'
         : 'bg-gray-300 text-gray-700 hover:bg-gray-400 hover:text-gray-900'
     }`}
   >
@@ -77,7 +77,7 @@ const TeacherDashboard = () => {
         <>
           <button
             onClick={() => navigate('create-test')}
-            className="bg-purple-500 text-white rounded-lg p-2 hover:bg-purple-600 mb-6"
+            className="bg-teal-700 text-white rounded-lg p-2 hover:bg-teal-600 mb-6"
           >
             Create New Test
           </button>

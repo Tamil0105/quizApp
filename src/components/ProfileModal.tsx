@@ -18,7 +18,7 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({ isOpen, onClose, onLo
           <div className="h-10 w-10 rounded-full bg-gray-200  flex items-center justify-center text-gray-500 ">
             <span className="text-lg font-semibold">{userDetails?.name?.charAt(0) || 'U'}</span>
           </div>
-          <div>
+          <div className='flex justify-start text-start flex-col'>
             <p className="text-gray-900  font-semibold">{userDetails?.name || 'User'}</p>
             <p className="text-gray-600 text-sm">{userDetails?.email || 'user@example.com'}</p>
           </div>

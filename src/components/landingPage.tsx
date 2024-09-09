@@ -12,7 +12,7 @@ const LandingPage = () => {
           <button onClick={() =>{navigate('/login')}}  className="bg-white text-teal-600 font-semibold py-2 px-4 rounded mr-4 transition hover:scale-105">
             Login
           </button>
-          <button onClick={() =>{navigate('/signup')}}  className="bg-purple-500 text-white font-semibold py-2 px-4 rounded transition hover:scale-105">
+          <button onClick={() =>{navigate('/signup')}}  className="bg-black text-white font-semibold py-2 px-4 rounded transition hover:scale-105">
             Sign Up
           </button>
         </div>
@@ -30,7 +30,7 @@ const LandingPage = () => {
       >
         <div className="text-center max-w-xl bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
           <h1 className="text-4xl font-bold text-teal-600 mb-4">
-            Welcome to <span className="text-purple-500">Assessment</span>
+            Welcome to <span className="text-black">Assessment</span>
           </h1>
           <p className="text-lg text-gray-700 mb-6">
             The ultimate platform for creating, taking, and analyzing quizzes. Whether you're a student or a teacher, 
@@ -54,7 +54,7 @@ const LandingPage = () => {
       >
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-semibold text-teal-600 mb-8">
-            Why Choose <span className="text-purple-500">Assessment?</span>
+            Why Choose <span className="text-black">Assessment?</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Feature 1 */}

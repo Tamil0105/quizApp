@@ -136,14 +136,13 @@ const AnalyticPage: React.FC<Props> = ({ department }) => {
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading analytics...</div>;
   }
-
-  if (!analytics) {
+  if (analytics?.totalStudents===0) {
     return <div className="text-center text-red-600">No analytics data available.</div>;
   }
 
   return (
     <div className="min-h-screen p-4">
-      <h1 className="text-3xl font-bold mb-4">Department Analytics: {analytics.department}</h1>
+      <h1 className="text-3xl font-bold mb-4">Department Analytics: {analytics?.department}</h1>
       <div className="flex justify-between mb-6">
         <button onClick={exportAllAsCSV} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
           Export All as CSV
@@ -168,7 +167,7 @@ const AnalyticPage: React.FC<Props> = ({ department }) => {
             </tr>
           </thead>
           <tbody>
-            {analytics.studentDetails.map((student) => (
+            {analytics?.studentDetails.map((student) => (
               <tr key={student.registrationNumber} className='text-center'>
                 <td className="px-4 py-2 border">{student.studentName}</td>
                 <td className="px-4 py-2 border">{student.department}</td>
