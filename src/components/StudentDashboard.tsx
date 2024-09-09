@@ -66,7 +66,7 @@ console.log(selectedTest)
           <div key={test.id} className="bg-white border border-gray-300 flex flex-col gap-4 rounded-lg shadow-lg p-6">
             <div className="flex flex-col items-start">
               {/* Test Name with Icon */}
-              <FiBook className="text-4xl text-blue-600 mb-2" /> {/* Icon for test */}
+              <FiBook className="text-4xl text-purple-500 mb-2" /> {/* Icon for test */}
               <h3 className="text-2xl font-semibold mb-2">{test.name}</h3>
             </div>
             <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ console.log(selectedTest)
             </div>
             <button
               onClick={() => handleStartTest(test.id)}
-              className="bg-blue-500 flex items-center w-36 gap-2 text-white rounded-lg px-4 py-2 hover:bg-blue-600 transition duration-300 text-sm font-medium"
+              className="bg-purple-500 flex items-center w-36 gap-2 text-white rounded-lg px-4 py-2 hover:bg-purple-600 transition duration-300 text-sm font-medium"
             >
               {/* Play Icon inside button */}
               <FiPlayCircle className="text-xl" />

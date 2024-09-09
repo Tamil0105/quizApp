@@ -32,7 +32,7 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="bg-white dark:bg-gray-800 p-4 shadow-md sticky top-0 z-50">
+    <nav className="bg-teal-600 p-4 shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between">
         <Link to="/" className="text-xl font-semibold text-gray-900 dark:text-white">
         Assessment        </Link>

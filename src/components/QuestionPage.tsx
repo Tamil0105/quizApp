@@ -50,7 +50,7 @@ const QuestionPage = () => {
         setTest(fetchedTest);
         setTestDuration(fetchedTest.duration);
         setTestTimer(fetchedTest.duration);
-        setTimeLeft(fetchedTest.questions[0]?.timer || 15);
+        setTimeLeft(fetchedTest.duration/fetchedTest.questions.length || 15);
 
         // Shuffle questions and options
         const shuffled = fetchedTest.questions.map((question: any) => ({
@@ -68,7 +68,7 @@ const QuestionPage = () => {
     }
   }, [testId]);
   useEffect(() => {
-    if (!isTabFocused) {
+    if (!isTabFocused&&tabSwitchCount<3) {
       // Notify user when tab is not focused
       if (Notification.permission === 'granted') {
         new Notification('Reminder', {
@@ -239,6 +239,7 @@ const finalResponses = JSON.parse(localStorage.getItem(`test-${testId}-responses
         <p className="text-lg text-gray-600 mb-2">
           <span className="font-semibold">Total Marks:</span> {totalMarks}
         </p>
+        {/* Calculate the passing mark based on 70% of the full mark */}
         <p className={`text-lg font-semibold mb-4 ${totalMarks >= (test?.passMark || 0) * 0.7 ? 'text-green-600' : 'text-red-600'}`}>
           {totalMarks >= (test?.passMark || 0) * 0.7 ? 'Congratulations, you passed!' : 'Sorry, you failed.'}
         </p>
@@ -264,6 +265,7 @@ const finalResponses = JSON.parse(localStorage.getItem(`test-${testId}-responses
         </button>
       </div>
     </div>
+    
     
     );
   }

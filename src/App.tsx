@@ -11,6 +11,8 @@ import Navbar from './components/navBar';
 import TestAnalytics from './components/TestAnalytics';
 import CoursePage from './components/coursePages';
 import CreateTestPage from './components/createTestPage';
+import LandingPage from './components/landingPage';
+import AnalyticPage from './components/departmentAnalyticPage';
 
 const App: React.FC = () => {
   return (
@@ -24,7 +26,7 @@ const AppContent: React.FC = () => {
   const location = useLocation();
 
   // List of paths where the Navbar should not be displayed
-  const hideNavbarPaths = ['/', '/signup'];
+  const hideNavbarPaths = ['/login','/', '/signup'];
 
   return (
     <>
@@ -33,7 +35,9 @@ const AppContent: React.FC = () => {
       <main className="">
         <Routes>
           <Route path="/signup" element={<Signup />} />
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<LandingPage />} />
+
           <Route path="/teacher-dashboard/course" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
           <Route path="/student-dashboard/course" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
           <Route path="/student-dashboard/course/:course" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />

@@ -19,7 +19,6 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-
   const validatePhoneNumber = (phone: string) => {
     return phone.length >= 10; // Simple phone number validation
   };

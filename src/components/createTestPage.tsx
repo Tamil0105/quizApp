@@ -1,65 +1,73 @@
-import React, { useState } from 'react';
-import { IoIosArrowBack } from 'react-icons/io'; // Arrow back icon
-import { FaPlus } from 'react-icons/fa'; // Plus icon
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid'; // Import uuidv4
-import { useParams } from 'react-router-dom';
+import React, { useState } from "react";
+import { IoIosArrowBack } from "react-icons/io"; // Arrow back icon
+import { FaPlus, FaEdit, FaTrashAlt } from "react-icons/fa"; // Plus, Edit, Delete icons
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid"; // Import uuidv4
+import { useNavigate, useParams } from "react-router-dom";
 
 type Question = {
-    id: string;
-    question: string;
-    options: string[];
-    answer: string;
-    timer: number;
+  id: string;
+  question: string;
+  options: string[];
+  answer: string;
+  timer: number;
 };
 
 type Test = {
-    id: string;
-    name: string;
-    questions: Question[];
-    duration: number;
-    category: string;
-    responses: Response[];
+  id: string;
+  name: string;
+  questions: Question[];
+  duration: number;
+  category: string;
+  responses: Response[];
 };
 
 type Response = {
-    questionId: string;
-    selectedOption: string;
+  questionId: string;
+  selectedOption: string;
 };
 
 const CreateTestPage: React.FC = () => {
-  const [testName, setTestName] = useState('');
-  const [testDuration, setTestDuration] = useState<number>(60); // Default to 60 seconds
-  const [durationUnit, setDurationUnit] = useState<'seconds' | 'minutes'>('seconds');
-  const [questionText, setQuestionText] = useState('');
-  const [newOption, setNewOption] = useState('');
-  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [testName, setTestName] = useState("");
+  const [testDuration, setTestDuration] = useState<number>(60); // Default to 60 minutes
+  const [durationUnit, setDurationUnit] = useState<"minutes" | "hours">("minutes");
+  const [questionText, setQuestionText] = useState("");
+  const [newOption, setNewOption] = useState("");
+  const [correctAnswer, setCorrectAnswer] = useState("");
   const [options, setOptions] = useState<string[]>([]);
-  const [questions, setQuestions] = useState<{ id:string;question: string, options: string[], timer: number; answer: string }[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [editIndex, setEditIndex] = useState<number | null>(null); // For tracking which question is being edited
   const [errors, setErrors] = useState<string[]>([]);
   const { course } = useParams<{ course: string }>();
-
-  const validateDuration = (value: number) => {
-    if (durationUnit === 'seconds' && (value < 1 || value > 120)) {
-      return 'Duration must be between 1 and 120 seconds.';
-    } else if (durationUnit === 'minutes' && (value < 1 || value > 1)) {
-      return 'Duration must be 1 minute.';
-    }
-    return '';
-  };
+  const navigate = useNavigate();
 
   const handleAddOption = () => {
     if (newOption && options.length < 6) {
       setOptions([...options, newOption]);
-      setNewOption('');
+      setNewOption("");
     } else if (options.length >= 6) {
-      setErrors(['You can add a maximum of 6 options.']);
+      setErrors(["You can add a maximum of 6 options."]);
     }
+  };
+
+  // Function to delete an individual option
+  const handleDeleteOption = (index: number) => {
+    const updatedOptions = options.filter((_, i) => i !== index);
+    setOptions(updatedOptions);
+  };
+
+  const validateDuration = (value: number, unit: "minutes" | "hours") => {
+    if (unit === "minutes" && value < 60) {
+      return "Duration must be at least 60 minutes.";
+    } else if (unit === "hours" && value < 1) {
+      return "Duration must be at least 1 hour.";
+    }
+    return "";
   };
 
   const handleCreateQuestion = () => {
     if (!questionText || options.length === 0 || !correctAnswer) {
-      setErrors(['Please fill out all fields and add at least one option.']);
+      setErrors(["Please fill out all fields and add at least one option."]);
       return;
     }
 
@@ -71,21 +79,43 @@ const CreateTestPage: React.FC = () => {
       timer: 0,
     };
 
-    setQuestions([...questions, newQuestion]);
-    setQuestionText('');
+    if (editIndex !== null) {
+      const updatedQuestions = [...questions];
+      updatedQuestions[editIndex] = newQuestion;
+      setQuestions(updatedQuestions);
+      setEditIndex(null); // Reset edit state
+    } else {
+      setQuestions([...questions, newQuestion]);
+    }
+
+    setQuestionText("");
     setOptions([]);
-    setNewOption('');
-    setCorrectAnswer('');
+    setNewOption("");
+    setCorrectAnswer("");
     setErrors([]);
+  };
+
+  const handleEditQuestion = (index: number) => {
+    const questionToEdit = questions[index];
+    setQuestionText(questionToEdit.question);
+    setOptions(questionToEdit.options);
+    setCorrectAnswer(questionToEdit.answer);
+    setEditIndex(index); // Set the index for editing
+  };
+
+  // Function to delete a question
+  const handleDeleteQuestion = (index: number) => {
+    const updatedQuestions = questions.filter((_, i) => i !== index);
+    setQuestions(updatedQuestions);
   };
 
   const validateForm = () => {
     const errors: string[] = [];
 
-    if (!testName) errors.push('Test name is required.');
-    if (questions.length === 0) errors.push('Please add at least one question.');
+    if (!testName) errors.push("Test name is required.");
+    if (questions.length === 0) errors.push("Please add at least one question.");
 
-    const durationError = validateDuration(testDuration);
+    const durationError = validateDuration(testDuration, durationUnit);
     if (durationError) errors.push(durationError);
 
     setErrors(errors);
@@ -95,19 +125,24 @@ const CreateTestPage: React.FC = () => {
 
   const createTest = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post('https://quiz-server-sigma.vercel.app/tests', newTest, { headers });
-      console.log('Test created');
+      await axios.post("https://quiz-server-sigma.vercel.app/tests", newTest, {
+        headers,
+      });
+      navigate(
+        `https://quiz-app-virid-five.vercel.app/teacher-dashboard/course/${course}`
+      );
+      console.log("Test created");
     } catch (error) {
-      console.error('Error creating test:', error);
+      console.error("Error creating test:", error);
     }
   };
 
   const handleSaveTest = () => {
     if (validateForm()) {
       createTest(); // Save test to backend
-      setTestName('');
+      setTestName("");
       setQuestions([]);
       setTestDuration(60); // Reset to default value
     }
@@ -117,13 +152,13 @@ const CreateTestPage: React.FC = () => {
     id: uuidv4(),
     name: testName,
     questions: questions,
-    category: course?.toUpperCase()??"MECH",
-    duration: testDuration,
+    category: course?.toUpperCase() ?? "MECH",
+    duration: durationUnit === "minutes" ? testDuration : testDuration * 60, // Convert hours to minutes
     responses: [],
   };
 
   return (
-    <div className="flex flex-col md:flex-row p-6 bg-gray-100 min-h-screen">
+    <div className="flex flex-col md:flex-row p-6 gap-3 bg-gray-100 min-h-screen">
       {/* Left side - Form */}
       <div className="flex-1 bg-white p-6 rounded-lg shadow-lg md:w-1/3">
         <div className="sticky top-0 bg-white z-10">
@@ -145,20 +180,6 @@ const CreateTestPage: React.FC = () => {
 
         <h2 className="text-2xl font-bold mb-4">Create New Test</h2>
 
-        {/* <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Select Category</label>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="border border-gray-300 rounded-lg p-2 w-full"
-          >
-            <option value="">Select a category</option>
-            <option value="EEE">EEE</option>
-            <option value="ECE">ECE</option>
-            <option value="MECH">MECH</option>
-          </select>
-        </div> */}
-
         <input
           type="text"
           placeholder="Enter test name"
@@ -174,14 +195,17 @@ const CreateTestPage: React.FC = () => {
             value={testDuration}
             onChange={(e) => setTestDuration(Number(e.target.value))}
             className="border border-gray-300 rounded-lg p-2 w-2/3"
+            min={durationUnit === "minutes" ? 60 : 1} // Minimum value depends on the unit
           />
           <select
             value={durationUnit}
-            onChange={(e) => setDurationUnit(e.target.value as 'seconds' | 'minutes')}
+            onChange={(e) =>
+              setDurationUnit(e.target.value as "minutes" | "hours")
+            }
             className="border border-gray-300 rounded-lg p-2 w-1/3 ml-2"
           >
-            <option value="seconds">Seconds</option>
             <option value="minutes">Minutes</option>
+            <option value="hours">Hours</option>
           </select>
         </div>
 
@@ -191,7 +215,9 @@ const CreateTestPage: React.FC = () => {
           ))}
         </div>
 
-        <h3 className="text-xl font-semibold mb-4">Add Question</h3>
+        <h3 className="text-xl font-semibold mb-4">
+          {editIndex !== null ? "Edit Question" : "Add Question"}
+        </h3>
 
         <input
           type="text"
@@ -220,52 +246,73 @@ const CreateTestPage: React.FC = () => {
           <h4 className="font-semibold mb-2">Options</h4>
           <ul className="list-disc pl-5">
             {options.map((option, index) => (
-              <li key={index} className="mb-1">{option}</li>
+              <li key={index} className="flex items-center">
+                {option}
+                <button
+                  onClick={() => handleDeleteOption(index)}
+                  className="text-red-500 ml-2"
+                >
+                  <FaTrashAlt />
+                </button>
+              </li>
             ))}
           </ul>
         </div>
 
         <input
           type="text"
-          placeholder="Enter the correct answer"
+          placeholder="Enter correct answer"
           value={correctAnswer}
           onChange={(e) => setCorrectAnswer(e.target.value)}
-          className="border border-gray-300 rounded-lg p-2 w-full mb-2"
+          className="border border-gray-300 rounded-lg p-2 w-full mb-4"
         />
 
         <button
           onClick={handleCreateQuestion}
-          className="bg-green-500 text-white rounded-lg p-2 hover:bg-green-600 mb-4"
+          className="bg-purple-500 text-white rounded-lg p-2 hover:bg-purple-600 w-full"
         >
-          Add Question
+          {editIndex !== null ? "Update Question" : "Add Question"}
         </button>
       </div>
 
-      {/* Right side - Preview */}
-      <div className="md:w-2/3 md:pl-6 flex flex-col">
-        <div className="flex-1 overflow-y-auto bg-white p-6 rounded-lg shadow-lg">
-          <h4 className="text-xl font-bold mb-4">Test Preview</h4>
-          <h5 className="text-lg font-semibold mb-2">Test Name:</h5>
-          <p>{testName}</p>
+      {/* Right side - Questions list */}
+      <div className="flex-1 bg-white p-6 rounded-lg shadow-lg md:w-2/3 overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-4">Questions</h2>
 
-          <h5 className="text-lg font-semibold mt-4 mb-2">Duration:</h5>
-          <p>{testDuration} {durationUnit}</p>
-
-          <h5 className="text-lg font-semibold mt-4 mb-2">Questions:</h5>
-          <ul className="list-disc pl-5">
-            {questions.map((q, index) => (
-              <li key={index} className="mb-2">
-                <strong>Q{index + 1}: </strong>{q.question}
-                <ul className="list-disc pl-5 mt-2">
-                  {q.options.map((opt, i) => (
-                    <li key={i}>{opt}</li>
+        {questions.length === 0 ? (
+          <p>No questions added yet.</p>
+        ) : (
+          <ul className="space-y-4">
+            {questions.map((question, index) => (
+              <li key={question.id} className="bg-gray-100 p-4 rounded-lg">
+                <h4 className="font-semibold mb-2">{question.question}</h4>
+                <ul className="list-disc pl-5 mb-2">
+                  {question.options.map((option, i) => (
+                    <li key={i}>{option}</li>
                   ))}
                 </ul>
-                <p><strong>Answer:</strong> {q.answer}</p>
+                <p className="mb-2">
+                  <strong>Correct Answer:</strong> {question.answer}
+                </p>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEditQuestion(index)}
+                    className="text-blue-500"
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteQuestion(index)}
+                    className="text-red-500"
+                  >
+                    <FaTrashAlt />
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
-        </div>
+        )}
       </div>
     </div>
   );
