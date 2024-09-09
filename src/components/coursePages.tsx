@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import jwtDecode from 'jwt-decode';
 import { AiOutlineDesktop } from 'react-icons/ai';
 import { GiMechanicGarage } from 'react-icons/gi';
 import { MdComputer } from 'react-icons/md';

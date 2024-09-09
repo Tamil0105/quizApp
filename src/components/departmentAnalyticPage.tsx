@@ -146,16 +146,16 @@ const AnalyticPage: React.FC<Props> = ({ department }) => {
   }
 
   // Prepare data for the chart
-  const chartData = {
-    labels: ['Passed', 'Failed'],
-    datasets: [
-      {
-        label: 'Tests Results',
-        data: [analytics.passedCount, analytics.failedCount],
-        backgroundColor: ['#4caf50', '#f44336'],
-      }
-    ]
-  };
+  // const chartData = {
+  //   labels: ['Passed', 'Failed'],
+  //   datasets: [
+  //     {
+  //       label: 'Tests Results',
+  //       data: [analytics.passedCount, analytics.failedCount],
+  //       backgroundColor: ['#4caf50', '#f44336'],
+  //     }
+  //   ]
+  // };
 
   return (
     <div className="min-h-screen p-4">

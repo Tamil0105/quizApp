@@ -12,8 +12,6 @@ import TestAnalytics from './components/TestAnalytics';
 import CoursePage from './components/coursePages';
 import CreateTestPage from './components/createTestPage';
 import LandingPage from './components/landingPage';
-import AnalyticPage from './components/departmentAnalyticPage';
-
 const App: React.FC = () => {
   return (
     <Router>
