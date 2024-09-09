@@ -3,7 +3,6 @@ import { saveAs } from 'file-saver';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import axios from 'axios';
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 import * as XLSX from 'xlsx';
 
 // Define types for the department analytics and student details
@@ -36,8 +35,6 @@ interface Props {
   department: string;
 }
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
-
 const AnalyticPage: React.FC<Props> = ({ department }) => {
   const [analytics, setAnalytics] = useState<DepartmentAnalytics | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -45,7 +42,6 @@ const AnalyticPage: React.FC<Props> = ({ department }) => {
   const headers = { Authorization: `Bearer ${token}` };
 
   useEffect(() => {
-    // Fetch department analytics (e.g., MECH department)
     axios.get(`https://quiz-server-sigma.vercel.app/responses/analytics/department/${department}`, { headers })
       .then((response) => {
         setAnalytics(response.data);
@@ -145,18 +141,6 @@ const AnalyticPage: React.FC<Props> = ({ department }) => {
     return <div className="text-center text-red-600">No analytics data available.</div>;
   }
 
-  // Prepare data for the chart
-  // const chartData = {
-  //   labels: ['Passed', 'Failed'],
-  //   datasets: [
-  //     {
-  //       label: 'Tests Results',
-  //       data: [analytics.passedCount, analytics.failedCount],
-  //       backgroundColor: ['#4caf50', '#f44336'],
-  //     }
-  //   ]
-  // };
-
   return (
     <div className="min-h-screen p-4">
       <h1 className="text-3xl font-bold mb-4">Department Analytics: {analytics.department}</h1>
@@ -169,46 +153,43 @@ const AnalyticPage: React.FC<Props> = ({ department }) => {
         </button>
       </div>
 
-      {/* Uncomment and configure the chart if needed */}
-      {/* <div className="mb-6">
-        <Bar data={chartData} />
-      </div> */}
-
-      <table className="table-auto w-full bg-white shadow-md rounded-lg">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="px-4 py-2 border">Student Name</th>
-            <th className="px-4 py-2 border">Department</th>
-            <th className="px-4 py-2 border">Registration Number</th>
-            <th className="px-4 py-2 border">College Name</th>
-            <th className="px-4 py-2 border">Tests Taken</th>
-            <th className="px-4 py-2 border">Passed</th>
-            <th className="px-4 py-2 border">Failed</th>
-            <th className="px-4 py-2 border">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {analytics.studentDetails.map((student) => (
-            <tr key={student.registrationNumber} className='text-center'>
-              <td className="px-4 py-2 border">{student.studentName}</td>
-              <td className="px-4 py-2 border">{student.department}</td>
-              <td className="px-4 py-2 border">{student.registrationNumber}</td>
-              <td className="px-4 py-2 border">{student.collegeName}</td>
-              <td className="px-4 py-2 border">{student.testsTaken}</td>
-              <td className="px-4 py-2 border">{student.testResults.filter((res) => res.pass).length}</td>
-              <td className="px-4 py-2 border">{student.testsTaken - student.testResults.filter((res) => res.pass).length}</td>
-              <td className="px-4 py-2 border">
-                <button
-                  onClick={() => exportStudentAsPDF(student)}
-                  className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition"
-                >
-                  Export PDF
-                </button>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white shadow-md rounded-lg">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="px-4 py-2 border">Student Name</th>
+              <th className="px-4 py-2 border">Department</th>
+              <th className="px-4 py-2 border">Registration Number</th>
+              <th className="px-4 py-2 border">College Name</th>
+              <th className="px-4 py-2 border">Tests Taken</th>
+              <th className="px-4 py-2 border">Passed</th>
+              <th className="px-4 py-2 border">Failed</th>
+              <th className="px-4 py-2 border">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {analytics.studentDetails.map((student) => (
+              <tr key={student.registrationNumber} className='text-center'>
+                <td className="px-4 py-2 border">{student.studentName}</td>
+                <td className="px-4 py-2 border">{student.department}</td>
+                <td className="px-4 py-2 border">{student.registrationNumber}</td>
+                <td className="px-4 py-2 border">{student.collegeName}</td>
+                <td className="px-4 py-2 border">{student.testsTaken}</td>
+                <td className="px-4 py-2 border">{student.testResults.filter((res) => res.pass).length}</td>
+                <td className="px-4 py-2 border">{student.testsTaken - student.testResults.filter((res) => res.pass).length}</td>
+                <td className="px-4 py-2 border">
+                  <button
+                    onClick={() => exportStudentAsPDF(student)}
+                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition"
+                  >
+                    Export PDF
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
