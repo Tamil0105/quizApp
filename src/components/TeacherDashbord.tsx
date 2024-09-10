@@ -52,7 +52,7 @@ const TeacherDashboard = () => {
     onClick={() => setActiveTab('test')}
     className={`px-4 py-2 text-sm rounded-lg transition-transform duration-300 ease-in-out ${
       activeTab === 'test'
-        ? 'bg-teal-600 text-white shadow-lg shadow-purple-400'
+        ? 'bg-teal-600 text-white shadow-lg '
         : 'bg-gray-300 text-gray-700 hover:bg-gray-400 hover:text-gray-900'
     }`}
   >
@@ -64,7 +64,7 @@ const TeacherDashboard = () => {
     onClick={() => setActiveTab('report')}
     className={`px-4 py-2 text-sm rounded-lg transition-transform duration-300 ease-in-out ${
       activeTab === 'report'
-        ? 'bg-teal-600 text-white shadow-lg shadow-purple-400'
+        ? 'bg-teal-600 text-white shadow-lg '
         : 'bg-gray-300 text-gray-700 hover:bg-gray-400 hover:text-gray-900'
     }`}
   >
