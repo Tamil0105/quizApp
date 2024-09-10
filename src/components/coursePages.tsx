@@ -64,21 +64,22 @@ const CoursePage: React.FC = () => {
                     {isAdmin ? 'Select a Course' : `Department: ${(user as any)?.department.toUpperCase()}`}
                 </h2>
             </div>
-            <div className={`grid grid-cols-${isAdmin ? '2' : '1'}  justify-center items-center  lg:grid-cols-${isAdmin ? '4' : '1'} gap-6`}>
-                {courses.map((course, index) => (
-                    <Link onClick={() =>{
-                        setTests()
-                    }} to={ isAdmin?`/teacher-dashboard/course/${course.path}`:`/student-dashboard/course/${course.path}`} key={index} className="folder-card">
-                        <div
-                            className={`flex flex-col items-center p-8 bg-white border ${course.borderColor} rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105`}
-                            style={{ backgroundImage: `url(${course.backgroundImage})`, backgroundSize: 'cover' }}
-                        >
-                            {course.icon}
-                            <span className="text-xl font-semibold">{course.label}</span>
-                        </div>
-                    </Link>
-                ))}
+            <div className={`grid grid-cols-${isAdmin?"2":"1"} md:grid-cols-${isAdmin?"2":"1"} lg:grid-cols-${isAdmin?"4":"1"} justify-center items-center gap-6`}>
+    {courses.map((course, index) => (
+        <Link onClick={() => {
+            setTests()
+        }} to={ isAdmin ? `/teacher-dashboard/course/${course.path}` : `/student-dashboard/course/${course.path}`} key={index} className="folder-card">
+            <div
+                className={`flex flex-col items-center p-8 bg-white border ${course.borderColor} rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105`}
+                style={{ backgroundImage: `url(${course.backgroundImage})`, backgroundSize: 'cover' }}
+            >
+                {course.icon}
+                <span className="text-xl font-semibold">{course.label}</span>
             </div>
+        </Link>
+    ))}
+</div>
+
         </div>
     );
 };
