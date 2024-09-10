@@ -64,7 +64,7 @@ const CoursePage: React.FC = () => {
                     {isAdmin ? 'Select a Course' : `Department: ${(user as any)?.department.toUpperCase()}`}
                 </h2>
             </div>
-            <div className={`grid grid-cols-${isAdmin ? '2' : '1'} lg:grid-cols-${isAdmin ? '4' : '1'} justify-center items-center  md:grid-cols-${isAdmin ? '2' : '1'} gap-6`}>
+            <div className={`grid  sm:grid-cols-${isAdmin ? '2' : '1'} grid-cols-${isAdmin ? '2' : '1'} lg:grid-cols-${isAdmin ? '4' : '1'} justify-center items-center  md:grid-cols-${isAdmin ? '4' : '1'} gap-6`}>
                 {courses.map((course, index) => (
                     <Link onClick={() =>{
                         setTests()
