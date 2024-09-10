@@ -241,8 +241,9 @@ const finalResponses = JSON.parse(localStorage.getItem(`test-${testId}-responses
           <span className="font-semibold">Total Marks:</span> {totalMarks}
         </p>
         {/* Calculate the passing mark based on 70% of the full mark */}
-        <p className={`text-lg font-semibold mb-4 ${totalMarks >= (test?.passMark || 0) * 0.7 ? 'text-green-600' : 'text-red-600'}`}>
-          {totalMarks >= (test?.passMark || 0) * 0.7 ? 'Congratulations, you passed!' : 'Sorry, you failed.'}
+        <p className={`text-lg font-semibold mb-4 ${totalMarks!=0&&totalMarks >= (test?.passMark || 0) * 0.7 ? 'text-green-600' : 'text-red-600'}`}>
+
+          {totalMarks!=0&&totalMarks >= (test?.passMark || 0) * 0.7 ? 'Congratulations, you passed!' : 'Sorry, you failed.'}
         </p>
       </div>
     
