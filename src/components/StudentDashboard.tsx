@@ -54,7 +54,7 @@ console.log(selectedTest)
   );
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6  h-full">
       <h1 className="text-3xl font-bold mb-4">Student Dashboard</h1>
       <h2 className="text-xl font-semibold mb-4">Available Tests</h2>
 

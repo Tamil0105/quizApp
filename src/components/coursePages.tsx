@@ -57,14 +57,14 @@ const CoursePage: React.FC = () => {
         ];
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 py-8">
+        <div className="flex flex-col items-center justify-center min-h-[80vh] bg-gray-100 px-4 py-8">
             <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold mb-4">Welcome{isAdmin ? '' : ` ${user?.name}`}</h1>
                 <h2 className="text-2xl font-semibold mb-6">
                     {isAdmin ? 'Select a Course' : `Department: ${(user as any)?.department.toUpperCase()}`}
                 </h2>
             </div>
-            <div className={`grid grid-cols-2 lg:grid-cols-4 md:grid-cols-${isAdmin ? '4' : '1'} gap-6`}>
+            <div className={`grid grid-cols-${isAdmin ? '2' : '1'} lg:grid-cols-${isAdmin ? '4' : '1'} justify-center items-center md:grid-cols-${isAdmin ? '4' : '1'} gap-6`}>
                 {courses.map((course, index) => (
                     <Link onClick={() =>{
                         setTests()
