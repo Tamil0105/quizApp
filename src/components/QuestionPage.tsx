@@ -69,9 +69,9 @@ const QuestionPage = () => {
   }, [testId]);
   useEffect(() => {
     if (!isTabFocused&&tabSwitchCount<3) {
+      alert("'Don\'t forget to return to the quiz!")
       // Notify user when tab is not focused
       if (Notification.permission === 'granted') {
-        alert("'Don\'t forget to return to the quiz!")
         new Notification('Reminder', {
           body: 'Don\'t forget to return to the quiz!',
         });
