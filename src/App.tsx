@@ -11,7 +11,6 @@ import Navbar from './components/navBar';
 import TestAnalytics from './components/TestAnalytics';
 import CoursePage from './components/coursePages';
 import CreateTestPage from './components/createTestPage';
-import LandingPage from './components/landingPage';
 import AssessmentInstructions from './pages/AssessmentInstructionsPage';
 const App: React.FC = () => {
   return (
@@ -35,7 +34,6 @@ const AppContent: React.FC = () => {
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/instructions" element={<AssessmentInstructions/>} />
           <Route path="/teacher-dashboard/course/:course/:testId" element={<CreateTestPage />} />
           <Route path="/teacher-dashboard/course" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
           <Route path="/student-dashboard/course" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
