@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { LoginImg } from "../assets/svg/login";
 
 // Function to parse JWT
 function parseJwt(token: any) {
@@ -78,10 +79,12 @@ const Login: React.FC = () => {
       <div className="flex w-full h-full p-5 bg-gray-100 sm:p-10">
         <div className="flex w-full h-full rounded-lg shadow-lg">
           {/* Left Side */}
-          <div className="hidden lg:block h-full w-[50%] rounded-l-lg bg-white"></div>
+          <div className="hidden lg:flex lg:items-center lg:justify-center h-full w-[50%] rounded-l-lg bg-white border-r">
+            <LoginImg />
+          </div>
 
           {/* Right Side */}
-          <div className="flex items-center justify-center h-full w-full lg:w-[50%] rounded-lg lg:rounded-r-lg bg-white border-l">
+          <div className="flex items-center justify-center h-full w-full lg:w-[50%] rounded-lg lg:rounded-r-lg bg-white">
             <div className="h-[70%] w-[80%] sm:w-[60%] md:w-[50%] lg:w-[60%]">
               {/* Header */}
               <div className="w-full h-[15%] flex items-center justify-center">
@@ -103,7 +106,10 @@ const Login: React.FC = () => {
                 </p>
 
                 <div className="w-full px-5 lg:px-10">
-                  <form className="flex flex-col w-full gap-6" onSubmit={handleLogin}>
+                  <form
+                    className="flex flex-col w-full gap-6"
+                    onSubmit={handleLogin}
+                  >
                     {/* Phone Input */}
                     <div className="flex flex-col w-full gap-2">
                       <label

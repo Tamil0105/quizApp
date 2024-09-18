@@ -93,7 +93,7 @@
 // }
 
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import ProfileDropdown from "./ProfileModal";
 
 const Navbar: React.FC = () => {
@@ -123,11 +123,18 @@ const Navbar: React.FC = () => {
     }
   }
 
+  const location = useLocation();
+
+  console.log(location.pathname);
+
+  // List of paths where the Navbar should not be displayed
+  const hidCreateTestBtn = ["/teacher-dashboard/course"];
+
   return (
     <nav className="flex items-center w-full h-full px-5 bg-white shadow-sm">
       <div className="flex items-center justify-between w-full">
         {/* Left section - Greeting */}
-        <div className="text-xl font-semibold text-teal-600">
+        <div className="text-md md:text-xl font-semibold text-teal-600 w-[50%]">
           Hello, {userDetails?.name || "User"}{" "}
           <span role="img" aria-label="wave">
             👋
@@ -135,62 +142,87 @@ const Navbar: React.FC = () => {
           {/* Welcome message */}
           <div className="text-sm text-gray-500">Welcome to Assessment</div>
         </div>
-
-        {/* Right section - Profile circle */}
-        <div className="relative flex items-center space-x-4">
-          {/* Links based on user role */}
-          {userRole === "student" && (
-            <>
-              <Link
-                to="/student-dashboard"
-                className="text-gray-900 dark:text-white hover:underline"
+        <div className="w-[50%] flex justify-end gap-6">
+          {!hidCreateTestBtn.includes(location.pathname) && (
+            <div className="hidden rounded-lg md:flex w-[20%] md:w-[40%] lg:w-[20%]">
+              <button
+                className="w-full py-2 text-lg font-medium text-white rounded-lg bg-gradient-to-br from-teal-700 to-teal-500 hover:from-teal-800 hover:to-teal-500"
+                onClick={() => {
+                  navigate("/tests");
+                }}
               >
-                Dashboard
-              </Link>
-              <Link
-                to="/tests"
-                className="text-gray-900 dark:text-white hover:underline"
-              >
-                Tests
-              </Link>
-            </>
-          )}
-          {userRole === "admin" && (
-            <>
-              <Link
-                to="/admin-dashboard"
-                className="text-gray-900 dark:text-white hover:underline"
-              >
-                Dashboard
-              </Link>
-              <Link
-                to="/create-test"
-                className="text-gray-900 dark:text-white hover:underline"
-              >
-                Create Test
-              </Link>
-            </>
-          )}
-
-          {/* Profile button */}
-          <button
-            onClick={toggleProfileDropdown}
-            className="relative text-gray-900 dark:text-white"
-          >
-            <div className="flex items-center justify-center w-10 h-10 text-teal-600 border-2 border-teal-600 rounded-full bg-teal-600/25">
-              <span className="text-lg font-semibold">
-                {userDetails?.name?.charAt(0) || "U"}
-              </span>
+                + Create Test
+              </button>
             </div>
-            {isProfileDropdownOpen && (
-              <ProfileDropdown
-                isOpen={isProfileDropdownOpen}
-                onClose={toggleProfileDropdown}
-                onLogout={handleLogout}
-                userDetails={userDetails}
-              />
+          )}
+          {!hidCreateTestBtn.includes(location.pathname) && (
+            <div className="flex rounded-lg md:hidden">
+              <button
+                className="w-full px-5 py-2 text-lg font-medium text-white rounded-lg bg-gradient-to-br from-teal-700 to-teal-500 hover:from-teal-800 hover:to-teal-500"
+                onClick={() => {
+                  navigate("/tests");
+                }}
+              >
+                + 
+              </button>
+            </div>
+          )}
+          {/* Right section - Profile circle */}
+          <div className="relative flex items-center space-x-4">
+            {/* Links based on user role */}
+            {userRole === "student" && (
+              <>
+                <Link
+                  to="/student-dashboard"
+                  className="text-gray-900 dark:text-white hover:underline"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/tests"
+                  className="text-gray-900 dark:text-white hover:underline"
+                >
+                  Tests
+                </Link>
+              </>
             )}
-          </button>
+            {userRole === "admin" && (
+              <>
+                <Link
+                  to="/admin-dashboard"
+                  className="text-gray-900 dark:text-white hover:underline"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/create-test"
+                  className="text-gray-900 dark:text-white hover:underline"
+                >
+                  Create Test
+                </Link>
+              </>
+            )}
+
+            {/* Profile button */}
+            <button
+              onClick={toggleProfileDropdown}
+              className="relative text-gray-900 dark:text-white"
+            >
+              <div className="flex items-center justify-center w-10 h-10 text-teal-600 border-2 border-teal-600 rounded-full bg-teal-600/25">
+                <span className="text-lg font-semibold">
+                  {userDetails?.name?.charAt(0) || "U"}
+                </span>
+              </div>
+              {isProfileDropdownOpen && (
+                <ProfileDropdown
+                  isOpen={isProfileDropdownOpen}
+                  onClose={toggleProfileDropdown}
+                  onLogout={handleLogout}
+                  userDetails={userDetails}
+                />
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </nav>

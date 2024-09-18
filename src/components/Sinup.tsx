@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { SignUpImg } from "../assets/svg/signup";
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState("");
@@ -62,7 +63,9 @@ const SignUp: React.FC = () => {
     <div className="flex items-center justify-center w-screen h-screen bg-gray-100">
       <div className="flex w-full h-full p-4 sm:p-8 lg:p-10">
         <div className="flex flex-col w-full h-full rounded-lg shadow-lg lg:flex-row">
-          <div className="hidden lg:block h-full w-[50%] rounded-l-lg bg-white"></div>
+          <div className="hidden lg:flex lg:items-center lg:justify-center h-full w-[50%] rounded-l-lg bg-white border-r">
+            <SignUpImg />
+          </div>
           <div className="flex items-center justify-center h-full w-full lg:w-[50%] px-6 sm:px-8 py-5 rounded-lg lg:rounded-r-lg bg-white border-l">
             <div className="w-full h-full">
               <div className="w-full h-[10%] flex items-center justify-center mb-5">
