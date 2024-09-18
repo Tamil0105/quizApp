@@ -328,7 +328,7 @@ const QuestionPage: React.FC = () => {
   );
 
   if (showResults) {
-    const finalResponses = JSON.parse(localStorage.getItem(`test-${testId}-responses`) || '[]');
+    // const finalResponses = JSON.parse(localStorage.getItem(`test-${testId}-responses`) || '[]');
     // const { totalMarks } = calculateMarks(finalResponses);
   
     const totalPossibleMarks = test?.levels.reduce((acc, level) => acc + (level.questions.length * 2), 0) || 0;

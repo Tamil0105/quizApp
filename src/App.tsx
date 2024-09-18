@@ -11,7 +11,6 @@ import Navbar from './components/navBar';
 import TestAnalytics from './components/TestAnalytics';
 import CoursePage from './components/coursePages';
 import CreateTestPage from './components/createTestPage';
-import AssessmentInstructions from './pages/AssessmentInstructionsPage';
 const App: React.FC = () => {
   return (
     <Router>
