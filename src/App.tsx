@@ -12,6 +12,7 @@ import TestAnalytics from './components/TestAnalytics';
 import CoursePage from './components/coursePages';
 import CreateTestPage from './components/createTestPage';
 import LandingPage from './components/landingPage';
+import AssessmentInstructions from './pages/AssessmentInstructionsPage';
 const App: React.FC = () => {
   return (
     <Router>
@@ -34,10 +35,10 @@ const AppContent: React.FC = () => {
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<LandingPage />} />
-
+          <Route path="/instructions" element={<AssessmentInstructions/>} />
+          <Route path="/teacher-dashboard/course/:course/:testId" element={<CreateTestPage />} />
           <Route path="/teacher-dashboard/course" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
-          <Route path="/student-dashboard/course" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
+          {/* <Route path="/student-dashboard/course" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} /> */}
           <Route path="/student-dashboard/course/:course" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
           <Route path="/teacher-dashboard/course/:course" element={<ProtectedRoute><TeacherDashboard /></ProtectedRoute>} />
           <Route path="/question/:testId" element={<ProtectedRoute><QuestionPage /></ProtectedRoute>} />
@@ -45,6 +46,7 @@ const AppContent: React.FC = () => {
           <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
           <Route path="/test-analytics/:testId" element={<ProtectedRoute><TestAnalytics /></ProtectedRoute>} />
           <Route path="/teacher-dashboard/course/:course/create-test" element={<CreateTestPage />} />
+          
         </Routes>
       </main>
     </>

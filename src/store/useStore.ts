@@ -1,125 +1,109 @@
 import create from 'zustand';
 
-type Question = {
-  id: string;
+interface Question {
   question: string;
+  type: 'CHOICE' | 'TEXTAREA';
   options: string[];
   answer: string;
-  timer: number; // Timer for each question
-};
+}
 
-type Response = {
-  id: string; // Unique identifier for the response
-  questionId: string;
-  testId: string;
-  userId: string;
-  selectedOption: string;
-  marks: number; // Marks obtained for the question
-  pass: boolean; // Whether the student passed or failed
-  timeTaken: number; // Time taken for the response (in seconds)
-};
+interface Level {
+  levelNo: number;
+  levelName: string;
+  marks: number;
+  minusMarks: number;
+  questions: Question[];
+}
 
-type Test = {
+interface Test {
   id: string;
   name: string;
-  category:string
-  questions: Question[];
-  duration: number; // Total duration of the test
-  responses: Response[];
-};
+  timerForWholeTest: boolean;
+  levelsCount: number;
+  duration: number;
+  instructions: string;
+  category: string;
+  levels: Level[];
+  responses: any[]; // Define response type if needed
+}
 
-type StoreState = {
-  tests: Test[];
-  addQuestion: (testId: string, question: Question) => void;
-  addTest: (tests: Test[]) => void;
-  setTest: (updatedTest: Test) => void;
-  setTests: () => void;
-  setResponses: (testId: string, responses: Response[]) => void;
-  getTestResponses: (questionId: string) => Response[];
-  initializeStore: () => void;
-};
+interface TestStore {
+  activeStep :number;
+  test: Test | null;
+  setTestDetails: (details: Partial<Omit<Test, 'levels' | 'responses'>>) => void;
+  setTest: (test: Test) => void;
+  updateQuestion: (levelNo: number, questionIndex: number, updatedQuestion: Question) => void;
+  deleteQuestion: (levelNo: number, questionIndex: number) => void;
+  addQuestionToLevel: (levelNo: number, question: Question) => void;
+  addLevelToTest: (level: Level) => void;
+  setActiveStep : (activeStep: number) => void;
+}
 
-const useStore = create<StoreState>((set) => ({
-  tests: [],
+const useStore = create<TestStore>((set) => ({
+  test: null,
+activeStep:1,
+setActiveStep:(activeStep:number)  => set({activeStep}),
+  // Set the whole test object
+  setTest: (test: Test) => set({ test }),
 
-  setTests :() =>set((state) =>{
-    return {...state, tests: []}
-  }),
-  // Add multiple tests with duplicate check
-  addTest: (tests) => set((state) => {
-    const existingTestIds = new Set(state.tests.map(test => test.id));
-    const existingTestNames = new Set(state.tests.map(test => test.name));
-
-    const uniqueTests = tests.filter(test => 
-      !existingTestIds.has(test.id) && !existingTestNames.has(test.name)
-    );
-
-    if (uniqueTests.length === 0) {
-      console.warn('All tests are duplicates or already exist.');
-      return state; // No unique tests to add
-    }
-
-    return { tests: [...uniqueTests] };
+  // Update the basic test details (excluding levels and responses)
+  setTestDetails: (details: Partial<Omit<Test, 'levels' | 'responses'>>) => set((state) => {
+    if (!state.test) return state; // Ensure state.test is not null
+    return { test: { ...state.test, ...details } };
   }),
 
-  // Update an existing test or add a new one if it doesn't exist
-  setTest: (updatedTest) => set((state) => {
-    const testIndex = state.tests.findIndex(test => test.id === updatedTest.id);
-    if (testIndex !== -1) {
-      const updatedTests = [...state.tests];
-      updatedTests[testIndex] = updatedTest;
-      return { tests: updatedTests };
-    } else {
-      return { tests: [...state.tests, updatedTest] };
-    }
-  }),
+  // Update question by its index within a specific level
+  updateQuestion: (levelNo: number, questionIndex: number, updatedQuestion: Question) => set((state) => {
+    if (!state.test) return state; // Ensure state.test is not null
 
-  // Add a new question to a specific test
-  addQuestion: (testId, question) => set((state) => {
-    const updatedTests = state.tests.map(test => 
-      test.id === testId 
-        ? { ...test, questions: [...test.questions, question] }
-        : test
-    );
-    return { tests: updatedTests };
-  }),
-
-  // Set responses for a test
-  setResponses: (testId, responses) => set((state) => {
-    const updatedTests = state.tests.map(test => 
-      test.id === testId
-        ? { ...test, responses }
-        : test
-    );
-    return { tests: updatedTests };
-  }),
-
-  // Get all responses for a specific question
-  getTestResponses: (questionId) => {
-    const responses: Response[] = useStore.getState().tests.flatMap((test) =>
-      test.responses.filter((response) => response.questionId === questionId)
-    );
-    return responses;
-  },
-
-  // Initialize the store with default data
-  initializeStore: () => {
-    set({
-      tests: [
-        // Example data
-        // {
-        //   id: 'test1',
-        //   name: 'Sample Test',
-        //   questions: [
-        //     { id: 'q1', question: 'What is 2 + 2?', options: ['3', '4', '5'], answer: '4', timer: 30 },
-        //     { id: 'q2', question: 'What is 3 + 5?', options: ['7', '8', '9'], answer: '8', timer: 30 }
-        //   ],
-        //   duration: 120, // Total test duration in seconds
-        //   responses: []
-        // }
-      ]
+    const updatedLevels = state.test.levels.map((level) => {
+      if (level.levelNo === levelNo) {
+        const updatedQuestions = level.questions.map((question, index) =>
+          index === questionIndex ? updatedQuestion : question
+        );
+        return { ...level, questions: updatedQuestions };
+      }
+      return level;
     });
-  }
+
+    return { test: { ...state.test, levels: updatedLevels } };
+  }),
+
+  // Delete question by its index within a specific level
+  deleteQuestion: (levelNo: number, questionIndex: number) => set((state) => {
+    if (!state.test) return state; // Ensure state.test is not null
+
+    const updatedLevels = state.test.levels.map((level) => {
+      if (level.levelNo === levelNo) {
+        const updatedQuestions = level.questions.filter((_, index) => index !== questionIndex);
+        return { ...level, questions: updatedQuestions };
+      }
+      return level;
+    });
+
+    return { test: { ...state.test, levels: updatedLevels } };
+  }),
+
+  // Add a new question to a specific level
+  addQuestionToLevel: (levelNo: number, question: Question) => set((state) => {
+    if (!state.test) return state; // Ensure state.test is not null
+
+    const updatedLevels = state.test.levels.map((level) => {
+      if (level.levelNo === levelNo) {
+        return { ...level, questions: [...level.questions, question] };
+      }
+      return level;
+    });
+
+    return { test: { ...state.test, levels: updatedLevels } };
+  }),
+
+  // Add a new level to the test
+  addLevelToTest: (level: Level) => set((state) => {
+    if (!state.test) return state; // Ensure state.test is not null
+
+    return { test: { ...state.test, levels: [...state.test.levels, level] } };
+  }),
 }));
 
-export { useStore };
+export default useStore;

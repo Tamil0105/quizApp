@@ -4,7 +4,7 @@ import { AiOutlineDesktop } from 'react-icons/ai';
 import { GiMechanicGarage } from 'react-icons/gi';
 import { MdComputer } from 'react-icons/md';
 import { GiBrickWall } from 'react-icons/gi'; // Add icon for Civil Engineering
-import { useStore } from '../store/useStore';
+import useStore from '../store/useStore';
 
 interface User {
     role?: string;
@@ -23,7 +23,7 @@ function parseJwt(token: any) {
 }
 
 const CoursePage: React.FC = () => {
-    const { setTests } = useStore();
+    const { setTest } = useStore();
 
     const [user, setUser] = useState<User | null>(null);
 
@@ -67,7 +67,7 @@ const CoursePage: React.FC = () => {
             <div className={`flex flex-wrap justify-center gap-6`}>
     {courses.map((course, index) => (
         <Link
-            onClick={() => setTests()}
+            // onClick={() => setTests()}
             to={isAdmin ? `/teacher-dashboard/course/${course.path}` : `/student-dashboard/course/${course.path}`}
             key={index}
             className="folder-card"
