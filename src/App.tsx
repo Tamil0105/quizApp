@@ -27,10 +27,14 @@ const AppContent: React.FC = () => {
   const hideNavbarPaths = ['/login','/', '/signup'];
 
   return (
-    <>
+    <div className='w-screen h-screen'>
       {/* Conditionally render Navbar based on the current path */}
-      {!hideNavbarPaths.includes(location.pathname) && <Navbar />}
-      <main className="">
+      {!hideNavbarPaths.includes(location.pathname) && (
+        <div className='h-[10%]'>
+          <Navbar />
+        </div>
+        )}
+      <main className={`${!hideNavbarPaths.includes(location.pathname) ? 'h-[90%]' : 'h-[100%]'} w-full bg-gray-500/10`}>
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
@@ -47,7 +51,7 @@ const AppContent: React.FC = () => {
           <Route path="/teacher-dashboard/course/:course/create-test" element={<CreateTestPage />} />
         </Routes>
       </main>
-    </>
+    </div>
   );
 };
 
