@@ -28,7 +28,7 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/auth/signup', { 
+      const response = await axios.post('https://quiz-server-sigma.vercel.app/auth/signup', { 
         name,
         email, 
         phoneNumber: phone, 

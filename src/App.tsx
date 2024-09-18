@@ -38,7 +38,7 @@ const AppContent: React.FC = () => {
           <Route path="/instructions" element={<AssessmentInstructions/>} />
           <Route path="/teacher-dashboard/course/:course/:testId" element={<CreateTestPage />} />
           <Route path="/teacher-dashboard/course" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
-          {/* <Route path="/student-dashboard/course" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} /> */}
+          <Route path="/student-dashboard/course" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
           <Route path="/student-dashboard/course/:course" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
           <Route path="/teacher-dashboard/course/:course" element={<ProtectedRoute><TeacherDashboard /></ProtectedRoute>} />
           <Route path="/question/:testId" element={<ProtectedRoute><QuestionPage /></ProtectedRoute>} />

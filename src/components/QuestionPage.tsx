@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import ResultPage from './ResultPage';
+import AssessmentInstructions from '../pages/AssessmentInstructionsPage';
 
 // Interfaces
 interface Question {
@@ -84,13 +85,14 @@ const QuestionPage: React.FC = () => {
   const [showInstructions, setShowInstructions] = useState(true);
   const [timeTaken, setTimeTaken] = useState<string>('00:00');
   const [startTime, setStartTime] = useState<Date | null>(null);
-
+  const [tabSwitchCount, setTabSwitchCount] = useState(0);
+  const [isTabFocused, setIsTabFocused] = useState(true);
   useEffect(() => {
     const fetchTest = async () => {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
       try {
-        const response = await axios.get<Test>(`http://localhost:8080/tests/${testId}`, { headers });
+        const response = await axios.get<Test>(`https://quiz-server-sigma.vercel.app/tests/${testId}`, { headers });
         const fetchedTest = response.data;
         setTest(fetchedTest);
         const shuffled = fetchedTest.levels.map(level => ({
@@ -112,7 +114,35 @@ const QuestionPage: React.FC = () => {
       fetchTest();
     }
   }, [testId]);
+  useEffect(() => {
+    if (!isTabFocused&&tabSwitchCount<3) {
+      alert("'Don\'t forget to return to the quiz!")
+      // Notify user when tab is not focused
+      if (Notification.permission === 'granted') {
+        new Notification('Reminder', {
+          body: 'Don\'t forget to return to the quiz!',
+        });
+      }
+    }
+  }, [isTabFocused]);
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setIsTabFocused(true);
+      } else {
+        setIsTabFocused(false);
+        setTabSwitchCount((prevCount) => prevCount + 1);
+        if (tabSwitchCount >= 2) {
+          handleSubmitResponse();
+        }
+      }
+    };
 
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [tabSwitchCount]);
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -143,7 +173,7 @@ const QuestionPage: React.FC = () => {
           const nextLevelQuestions = shuffledQuestions[currentLevelIndex + 1]?.questions;
           setTimeLeft(nextLevelQuestions?.[0]?.timer || 0);
           setIsTransitioning(false);
-        }, 10000);
+        }, 1000);
       } else {
         handleSubmitResponse();
       }
@@ -217,7 +247,7 @@ const QuestionPage: React.FC = () => {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
 
-        await axios.post('http://localhost:8080/responses', {
+        await axios.post('https://quiz-server-sigma.vercel.app/responses', {
           testId: test?.id,
           userMarks: {
             userId: userId,
@@ -265,7 +295,13 @@ const QuestionPage: React.FC = () => {
   
     return { totalMarks, totalQuestions };
   };
+  let textColor = 'text-gray-500'; // Default color
 
+  if (timeLeft <= 0) {
+    textColor = 'text-red-600'; // Time is up
+  } else if (timeLeft <= 30) {
+    textColor = 'text-yellow-500'; // Nearing the end
+  }
   const handleStartQuiz = () => {
     setShowInstructions(false);
     setStartTime(new Date());  // Set the current time as the start time
@@ -341,7 +377,7 @@ const QuestionPage: React.FC = () => {
         passMark={passMark}
         takenTime={timeTaken} // Use the calculated takenTime
         resultsByLevel={resultsByLevel as any}
-        onRestart={() => window.location.reload()} 
+        // onRestart={() => window.location.reload()} 
       />
     );
   }
@@ -356,7 +392,7 @@ const QuestionPage: React.FC = () => {
   }
 
   if (showInstructions) {
-    return <InstructionPage onStart={handleStartQuiz} />;
+    return <AssessmentInstructions onStart={handleStartQuiz} />;
   }
 
   if (!test) return <div>Loading...</div>;
@@ -365,8 +401,10 @@ const QuestionPage: React.FC = () => {
     <div className="w-full max-w-3xl mx-auto p-8 mt-8">
       {renderLevels()}
       <div className="flex justify-between items-center mb-4">
-        <div className="text-gray-500 text-sm">{test.name}</div>
-        <div className="text-gray-500 text-sm">Time: {formatTime(timeLeft)}</div>
+        <div className="text-gray-500 text-xl">{test.name}</div>
+        <div className={`${textColor} text-xl`}>
+      Time: {formatTime(timeLeft)}
+    </div>
       </div>
       <h2 className="text-lg font-medium text-center">Level {currentLevelIndex + 1} - Question {currentQuestionIndex + 1}</h2>
       <div className="text-center mb-8">
@@ -396,12 +434,9 @@ const QuestionPage: React.FC = () => {
       </>
     )}
   </div>
-
-
-
-      <div className="bg-gray-100 py-4">
-        <div className="flex justify-between max-w-3xl mx-auto">
-          <p className="text-gray-600">Time Left: {formatTime(timeLeft)}</p>
+      <div className=" py-4">
+        <div className="flex justify-end  max-w-3xl mx-auto">
+          {/* <p className="text-gray-600">Time Left: {formatTime(timeLeft)}</p> */}
           <button
             onClick={handleNextQuestion}
             className="bg-teal-500 text-white py-2 px-6 rounded-lg"

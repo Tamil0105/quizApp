@@ -1,43 +1,42 @@
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FiBook, FiFolder, FiPlayCircle } from 'react-icons/fi';
-import useStore from '../store/useStore';
 
 const StudentDashboard: React.FC = () => {
-  const { test } = useStore();
-  const [tests,setTests] = useState([])
-  const [selectedTest, setSelectedTest] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true); // State for loading
-  const navigate = useNavigate(); 
-  const { course } = useParams<{ course: string }>();
-console.log(selectedTest)
-
-  const handleStartTest = (testId: string) => {
-    setSelectedTest(testId);
-    navigate(`/question/${testId}`);
-  };
-
-  useEffect(() => {
-    const fetchTests = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const headers = { Authorization: `Bearer ${token}` };
-        const response = await axios.get(`http://localhost:8080/tests/category/${course?.toUpperCase()}`, {
-          params: {
-            course: course?.toUpperCase(),
-          },
-          headers,
-        });      
-        setTests(response.data);
-      } catch (error) {
-        console.error('Error fetching tests:', error);
-      } finally {
-        setLoading(false); // Set loading to false after data is fetched
-      }
-    };
-    fetchTests();
-  }, [setTests]);
+      const [tests,setTests] = useState([])
+      const [selectedTest, setSelectedTest] = useState<string | null>(null);
+      const [loading, setLoading] = useState<boolean>(true); // State for loading
+      const navigate = useNavigate(); 
+      const { course } = useParams<{ course: string }>();
+    console.log(selectedTest)
+    
+      const handleStartTest = (testId: string) => {
+        setSelectedTest(testId);
+        navigate(`/question/${testId}`);
+      };
+    
+      useEffect(() => {
+        const fetchTests = async () => {
+          try {
+            const token = localStorage.getItem('token');
+            const headers = { Authorization: `Bearer ${token}` };
+            const response = await axios.get(`https://quiz-server-sigma.vercel.app/tests/category/${course?.toUpperCase()}`, {
+              params: {
+                course: course?.toUpperCase(),
+              },
+              headers,
+            });      
+            setTests(response.data);
+          } catch (error) {
+            console.error('Error fetching tests:', error);
+          } finally {
+            setLoading(false); // Set loading to false after data is fetched
+          }
+        };
+        fetchTests();
+      }, [setTests]);
 
   const renderSkeleton = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -63,8 +62,8 @@ console.log(selectedTest)
         renderSkeleton() // Show skeleton loader when data is being fetched
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tests.map((test:any,i) => (
-          <div key={i} className="bg-white border border-gray-300 flex flex-col gap-4 rounded-lg shadow-lg p-6">
+        {tests.map((test:any) => (
+          <div key={test.id} className="bg-white border border-gray-300 flex flex-col gap-4 rounded-lg shadow-lg p-6">
             <div className="flex flex-col items-start">
               {/* Test Name with Icon */}
               <FiBook className="text-4xl text-teal-600 mb-2" /> {/* Icon for test */}

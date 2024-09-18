@@ -29,6 +29,7 @@ interface Test {
 
 interface TestStore {
   activeStep :number;
+  
   test: Test | null;
   setTestDetails: (details: Partial<Omit<Test, 'levels' | 'responses'>>) => void;
   setTest: (test: Test) => void;

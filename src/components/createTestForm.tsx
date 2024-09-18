@@ -151,7 +151,7 @@ const CreateTestForm = () => {
       try {
         const token = localStorage.getItem('token');
         const headers = { Authorization: `Bearer ${token}` };
-        const response = await axios.get(`http://localhost:8080/tests/${routeTestId}`, {
+        const response = await axios.get(`https://quiz-server-sigma.vercel.app/tests/${routeTestId}`, {
           headers,
         })
         setTestDetails(response.data);
@@ -175,7 +175,7 @@ const level =  test?.levels.filter((l) => l.levelNo===currentTab+1)
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post(`http://localhost:8080/tests/${routeTestId}/levels`, {level}, { headers });
+      await axios.post(`https://quiz-server-sigma.vercel.app/tests/${routeTestId}/levels`, {level}, { headers });
     } catch (error) {
       console.error('Error creating test levels:', error);
     }
