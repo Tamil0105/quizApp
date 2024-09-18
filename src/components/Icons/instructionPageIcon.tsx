@@ -1,11 +1,11 @@
-import React from 'react'
+// import React from 'react'
 
-const instructionPageIcon = () => {
-  return (
-    <div>
+// const instructionPageIcon = () => {
+//   return (
+//     <div>
       
-    </div>
-  )
-}
+//     </div>
+//   )
+// }
 
-export default instructionPageIcon
+// export default instructionPageIcon

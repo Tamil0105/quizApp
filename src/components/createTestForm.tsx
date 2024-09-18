@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import useStore from "../store/useStore";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { data } from "framer-motion/client";
 
 const CreateTestForm = () => {
   const { test, setTest, setTestDetails, setCurrentTab,currentTab, addLevelToTest, addQuestionToLevel } = useStore((state) => ({
@@ -33,7 +32,7 @@ const CreateTestForm = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { testId: routeTestId } = useParams();
 
-
+console.log(loading)
 
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};

@@ -204,7 +204,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import AnalyticPage from "./departmentAnalyticPage";
-import useStore from "../store/useStore";
+// import useStore from "../store/useStore";
 
 const TeacherDashboard: React.FC = () => {
   const [tests, setTest] = useState([]);

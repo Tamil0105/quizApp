@@ -1,171 +1,166 @@
-import React, { useState } from "react";
-import { IoIosArrowBack } from "react-icons/io";
-import { FaEdit, FaPlus, FaTrashAlt } from "react-icons/fa";
-import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
-import { useParams } from "react-router-dom";
+import React from "react";
 import CreateTestForm from "./createTestForm";
 import QuestionPreviewPage from "./QuestionPreviewPage";
 
-type Question = {
-  id: string;
-  question: string;
-  options?: string[]; // For multiple-choice questions
-  answer: string;
-  timer?: number;
-  questionType: "textarea" | "multiple-choice"; // New field for question type
-  correctMark: number;
-  incorrectMark: number;
-};
+// type Question = {
+//   id: string;
+//   question: string;
+//   options?: string[]; // For multiple-choice questions
+//   answer: string;
+//   timer?: number;
+//   questionType: "textarea" | "multiple-choice"; // New field for question type
+//   correctMark: number;
+//   incorrectMark: number;
+// };
 
-type Test = {
-  id: string;
-  name: string;
-  questions: Question[];
-  duration: number;
-  category: string;
-  responses: Response[];
-  instructions: string;
-  durationType: "test" | "per-question"; // New field to differentiate test duration
-};
+// type Test = {
+//   id: string;
+//   name: string;
+//   questions: Question[];
+//   duration: number;
+//   category: string;
+//   responses: Response[];
+//   instructions: string;
+//   durationType: "test" | "per-question"; // New field to differentiate test duration
+// };
 
-type Response = {
-  questionId: string;
-  selectedOption: string;
-};
+// type Response = {
+//   questionId: string;
+//   selectedOption: string;
+// };
 
 const CreateTestPage: React.FC = () => {
-  const [testName, setTestName] = useState("");
-  const [testDuration, setTestDuration] = useState<number>(60);
-  const [durationType, setDurationType] = useState<"test" | "per-question">("test");
-  const [questionText, setQuestionText] = useState("");
-  const [newOption, setNewOption] = useState("");
-  const [correctAnswer, setCorrectAnswer] = useState("");
-  const [options, setOptions] = useState<string[]>([]);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [questionTimer, setQuestionTimer] = useState<number>(15);
-  const [questionType, setQuestionType] = useState<"textarea" | "multiple-choice">("multiple-choice");
-  const [correctMark, setCorrectMark] = useState<number>(1);
-  const [incorrectMark, setIncorrectMark] = useState<number>(0);
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [instructions, setInstructions] = useState("");
-  const [errors, setErrors] = useState<string[]>([]);
-  const { course } = useParams<{ course: string }>();
+  // const [testName, setTestName] = useState("");
+  // const [testDuration, setTestDuration] = useState<number>(60);
+  // const [durationType] = useState<"test" | "per-question">("test");
+  // const [questionText, setQuestionText] = useState("");
+  // const [newOption, setNewOption] = useState("");
+  // const [correctAnswer, setCorrectAnswer] = useState("");
+  // const [options, setOptions] = useState<string[]>([]);
+  // const [questions, setQuestions] = useState<Question[]>([]);
+  // const [questionTimer, setQuestionTimer] = useState<number>(15);
+  // const [questionType, setQuestionType] = useState<"textarea" | "multiple-choice">("multiple-choice");
+  // const [correctMark, setCorrectMark] = useState<number>(1);
+  // const [incorrectMark, setIncorrectMark] = useState<number>(0);
+  // const [editIndex, setEditIndex] = useState<number | null>(null);
+  // const [instructions, setInstructions] = useState("");
+  // const [, setErrors] = useState<string[]>([]);
+  // const { course } = useParams<{ course: string }>();
 
-  const handleAddOption = () => {
-    if (newOption && options.length < 6) {
-      setOptions([...options, newOption]);
-      setNewOption("");
-    } else if (options.length >= 6) {
-      setErrors(["You can add a maximum of 6 options."]);
-    }
-  };
+  // const handleAddOption = () => {
+  //   if (newOption && options.length < 6) {
+  //     setOptions([...options, newOption]);
+  //     setNewOption("");
+  //   } else if (options.length >= 6) {
+  //     setErrors(["You can add a maximum of 6 options."]);
+  //   }
+  // };
 
-  const handleDeleteOption = (index: number) => {
-    const updatedOptions = options.filter((_, i) => i !== index);
-    setOptions(updatedOptions);
-  };
+  // const handleDeleteOption = (index: number) => {
+  //   const updatedOptions = options.filter((_, i) => i !== index);
+  //   setOptions(updatedOptions);
+  // };
 
-  const handleCreateQuestion = () => {
-    if (!questionText || (questionType === "multiple-choice" && options.length === 0) || !correctAnswer || (durationType === "per-question" && questionTimer <= 0)) {
-      setErrors(["Please fill out all fields and add at least one option for multiple-choice questions."]);
-      return;
-    }
+  // const handleCreateQuestion = () => {
+  //   if (!questionText || (questionType === "multiple-choice" && options.length === 0) || !correctAnswer || (durationType === "per-question" && questionTimer <= 0)) {
+  //     setErrors(["Please fill out all fields and add at least one option for multiple-choice questions."]);
+  //     return;
+  //   }
 
-    const newQuestion: Question = {
-      id: uuidv4(),
-      question: questionText,
-      options: questionType === "multiple-choice" ? options : undefined,
-      answer: correctAnswer,
-      timer: durationType === "per-question" ? questionTimer : undefined,
-      questionType,
-      correctMark,
-      incorrectMark,
-    };
+  //   const newQuestion: Question = {
+  //     id: uuidv4(),
+  //     question: questionText,
+  //     options: questionType === "multiple-choice" ? options : undefined,
+  //     answer: correctAnswer,
+  //     timer: durationType === "per-question" ? questionTimer : undefined,
+  //     questionType,
+  //     correctMark,
+  //     incorrectMark,
+  //   };
 
-    if (editIndex !== null) {
-      const updatedQuestions = [...questions];
-      updatedQuestions[editIndex] = newQuestion;
-      setQuestions(updatedQuestions);
-      setEditIndex(null);
-    } else {
-      setQuestions([...questions, newQuestion]);
-    }
+  //   if (editIndex !== null) {
+  //     const updatedQuestions = [...questions];
+  //     updatedQuestions[editIndex] = newQuestion;
+  //     setQuestions(updatedQuestions);
+  //     setEditIndex(null);
+  //   } else {
+  //     setQuestions([...questions, newQuestion]);
+  //   }
 
-    resetQuestionForm();
-    setErrors([]);
-  };
+  //   resetQuestionForm();
+  //   setErrors([]);
+  // };
 
-  const resetQuestionForm = () => {
-    setQuestionText("");
-    setOptions([]);
-    setNewOption("");
-    setCorrectAnswer("");
-    setQuestionTimer(15);
-    setQuestionType("multiple-choice");
-    setCorrectMark(1);
-    setIncorrectMark(0);
-  };
+  // const resetQuestionForm = () => {
+  //   setQuestionText("");
+  //   setOptions([]);
+  //   setNewOption("");
+  //   setCorrectAnswer("");
+  //   setQuestionTimer(15);
+  //   setQuestionType("multiple-choice");
+  //   setCorrectMark(1);
+  //   setIncorrectMark(0);
+  // };
 
-  const handleEditQuestion = (index: number) => {
-    const questionToEdit = questions[index];
-    setQuestionText(questionToEdit.question);
-    setOptions(questionToEdit.options || []);
-    setCorrectAnswer(questionToEdit.answer);
-    setQuestionTimer(questionToEdit.timer || 15);
-    setQuestionType(questionToEdit.questionType);
-    setCorrectMark(questionToEdit.correctMark);
-    setIncorrectMark(questionToEdit.incorrectMark);
-    setEditIndex(index);
-  };
+  // const handleEditQuestion = (index: number) => {
+  //   const questionToEdit = questions[index];
+  //   setQuestionText(questionToEdit.question);
+  //   setOptions(questionToEdit.options || []);
+  //   setCorrectAnswer(questionToEdit.answer);
+  //   setQuestionTimer(questionToEdit.timer || 15);
+  //   setQuestionType(questionToEdit.questionType);
+  //   setCorrectMark(questionToEdit.correctMark);
+  //   setIncorrectMark(questionToEdit.incorrectMark);
+  //   setEditIndex(index);
+  // };
 
-  const handleDeleteQuestion = (index: number) => {
-    const updatedQuestions = questions.filter((_, i) => i !== index);
-    setQuestions(updatedQuestions);
-  };
+  // const handleDeleteQuestion = (index: number) => {
+  //   const updatedQuestions = questions.filter((_, i) => i !== index);
+  //   setQuestions(updatedQuestions);
+  // };
 
-  const validateForm = () => {
-    const errors: string[] = [];
-    if (!testName) errors.push("Test name is required.");
-    if (questions.length === 0) errors.push("Please add at least one question.");
-    setErrors(errors);
-    return errors.length === 0;
-  };
+  // const validateForm = () => {
+  //   const errors: string[] = [];
+  //   if (!testName) errors.push("Test name is required.");
+  //   if (questions.length === 0) errors.push("Please add at least one question.");
+  //   setErrors(errors);
+  //   return errors.length === 0;
+  // };
 
-  const createTest = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const headers = { Authorization: `Bearer ${token}` };
-      await axios.post("https://quiz-server-sigma.vercel.app/tests", newTest, {
-        headers,
-      });
-      window.location.replace(`http://localhost:3000/teacher-dashboard/course/${course}`);
-      console.log("Test created");
-    } catch (error) {
-      console.error("Error creating test:", error);
-    }
-  };
+  // const createTest = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const headers = { Authorization: `Bearer ${token}` };
+  //     await axios.post("https://quiz-server-sigma.vercel.app/tests", newTest, {
+  //       headers,
+  //     });
+  //     window.location.replace(`http://localhost:3000/teacher-dashboard/course/${course}`);
+  //     console.log("Test created");
+  //   } catch (error) {
+  //     console.error("Error creating test:", error);
+  //   }
+  // };
 
-  const handleSaveTest = () => {
-    if (validateForm()) {
-      createTest();
-      setTestName("");
-      setQuestions([]);
-      setTestDuration(60);
-      setInstructions("");
-    }
-  };
+  // const handleSaveTest = () => {
+  //   if (validateForm()) {
+  //     createTest();
+  //     setTestName("");
+  //     setQuestions([]);
+  //     setTestDuration(60);
+  //     setInstructions("");
+  //   }
+  // };
 
-  const newTest: Test = {
-    id: uuidv4(),
-    name: testName,
-    questions,
-    category: course?.toUpperCase() ?? "MECH",
-    duration: testDuration,
-    responses: [],
-    instructions,
-    durationType,
-  };
+  // const newTest: Test = {
+  //   id: uuidv4(),
+  //   name: testName,
+  //   questions,
+  //   category: course?.toUpperCase() ?? "MECH",
+  //   duration: testDuration,
+  //   responses: [],
+  //   instructions,
+  //   durationType,
+  // };
 
   return (
     <div className="flex flex-col md:flex-row p-6 gap-3 bg-gray-100 min-h-screen">

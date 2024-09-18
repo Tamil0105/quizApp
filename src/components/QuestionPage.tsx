@@ -55,19 +55,19 @@ const parseJwt = (token: string): JwtPayload => {
 };
 
 // Instruction Page Component
-const InstructionPage: React.FC<{ onStart: () => void }> = ({ onStart }) => (
-  <div className="w-full max-w-3xl mx-auto p-8 mt-8 text-center">
-    <h2 className="text-lg font-medium mb-4">Quiz Instructions</h2>
-    <p className="mb-4">Welcome to the quiz! Here are some important instructions:</p>
-    <ul className="list-disc list-inside mb-4">
-      <li>Each question has multiple options; choose the correct one.</li>
-      <li>You have a limited time for each question.</li>
-      <li>Your score will be based on correct answers.</li>
-      <li>Good luck!</li>
-    </ul>
-    <button onClick={onStart} className="bg-teal-500 text-white py-2 px-6 rounded-lg">Start Quiz</button>
-  </div>
-);
+// const InstructionPage: React.FC<{ onStart: () => void }> = ({ onStart }) => (
+//   <div className="w-full max-w-3xl mx-auto p-8 mt-8 text-center">
+//     <h2 className="text-lg font-medium mb-4">Quiz Instructions</h2>
+//     <p className="mb-4">Welcome to the quiz! Here are some important instructions:</p>
+//     <ul className="list-disc list-inside mb-4">
+//       <li>Each question has multiple options; choose the correct one.</li>
+//       <li>You have a limited time for each question.</li>
+//       <li>Your score will be based on correct answers.</li>
+//       <li>Good luck!</li>
+//     </ul>
+//     <button onClick={onStart} className="bg-teal-500 text-white py-2 px-6 rounded-lg">Start Quiz</button>
+//   </div>
+// );
 
 // Question Page Component
 const QuestionPage: React.FC = () => {
@@ -333,7 +333,7 @@ const QuestionPage: React.FC = () => {
   
     const totalPossibleMarks = test?.levels.reduce((acc, level) => acc + (level.questions.length * 2), 0) || 0;
     const passMark = totalPossibleMarks * 0.7; // 70% of total possible marks
-    const passed = totalMarks >= passMark;
+    // const passed = totalMarks >= passMark;
   
     const resultsByLevel = test?.levels.map((level, index) => {
       const levelResponses = JSON.parse(localStorage.getItem(`test-${testId}-level-${index}-responses`) || '[]');

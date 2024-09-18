@@ -260,7 +260,7 @@ console.log(test.levels.filter((le) =>le.levelNo===activeStep+1))
                         if (levelNo !== undefined) {
                           const questionIndex = test.levels
                             .find((level) => level.levelNo === levelNo)
-                            ?.questions.findIndex((q, i) => i === index);
+                            ?.questions.findIndex((q:any, i) => i === index||q.id=="");
                           if (
                             questionIndex !== undefined &&
                             questionIndex !== -1
@@ -279,7 +279,7 @@ console.log(test.levels.filter((le) =>le.levelNo===activeStep+1))
                         if (levelNo !== undefined) {
                           const questionIndex = test.levels
                             .find((level) => level.levelNo === levelNo)
-                            ?.questions.findIndex((q, i) => i === index);
+                            ?.questions.findIndex((q:any, i) => i === index||q.id==="");
                           if (
                             questionIndex !== undefined &&
                             questionIndex !== -1
