@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FaClock, FaQuestionCircle, FaRegClipboard } from 'react-icons/fa';
+import { FaClock, FaRegClipboard } from 'react-icons/fa';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import AnalyticPage from './departmentAnalyticPage';
@@ -10,9 +10,10 @@ const TeacherDashboard = () => {
   const [tests, setTest] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'test' | 'report'>('test');
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [testName, setTestName] = useState('');
   const [levelCount, setLevelCount] = useState(0);
+  const [instructions, setInstructions] = useState('');
   const navigate = useNavigate();
   const { course } = useParams<{ course: string }>();
 
@@ -47,14 +48,16 @@ const TeacherDashboard = () => {
         name: testName,
         category: course?.toUpperCase(),
         levelsCount: levelCount,
-        timerForWholeTest:true,
-duration:60
+        instructions, // Include instructions
+        timerForWholeTest: true,
+        duration: 60,
       };
-      await axios.post('http://localhost:8080/tests', newTest, { headers });
+      const res = await axios.post('http://localhost:8080/tests', newTest, { headers });
       setIsModalOpen(false);
       setTestName('');
       setLevelCount(0);
-      // Optionally, refetch tests to show the newly created test
+      setInstructions(''); // Reset instructions
+      navigate(`${res.data.id}`);
     } catch (error) {
       console.error('Error creating test:', error);
     }
@@ -93,7 +96,7 @@ duration:60
       {activeTab === 'test' && (
         <>
           <button
-            onClick={() => setIsModalOpen(true)} // Open modal on button click
+            onClick={() => setIsModalOpen(true)}
             className="bg-teal-700 text-white rounded-lg p-2 hover:bg-teal-600 mb-6"
           >
             Create New Test
@@ -112,7 +115,7 @@ duration:60
             <p className="text-center text-gray-500">No tests available.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {tests.map((test:any, i) => (
+              {tests.map((test: any, i) => (
                 <div
                   key={i}
                   className="bg-white border border-gray-200 rounded-lg shadow-md p-4 cursor-pointer hover:bg-gray-100"
@@ -133,27 +136,54 @@ duration:60
           {/* Modal for Creating a New Test */}
           {isModalOpen && (
             <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
-               <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Test configuration</h2>
-                <button onClick ={() =>{
-                  setIsModalOpen(false)
-                }} className="text-gray-500 hover:text-gray-700 border rounded-full p-3 h-10 w-10 flex justify-center items-center">
+              <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold">Test Configuration</h2>
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="text-gray-500 hover:text-gray-700 border rounded-full p-3 h-10 w-10 flex justify-center items-center"
+                  >
                     <i className="fas fa-times"></i>
-                </button>
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Enter test name *</label>
-                <input type="text" value={testName} onChange={(e) =>setTestName(e.target.value)} placeholder="Enter test name" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"/>
-            </div>
-            <div className="mb-6">
-                <label className="block text-gray-700 mb-2">Level count</label>
-                <input value={levelCount} onChange={(e) =>{setLevelCount(parseInt(e.target.value))}} type="text" placeholder="Enter Level Count" className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"/>
-            </div>
-            <div className="flex justify-end">
-                <button onClick={() =>handleCreateTest()} className="bg-teal-600 text-white px-6 py-2 rounded-lg">Confirm</button>
-            </div>
-        </div>
+                  </button>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 mb-2">Enter Test Name *</label>
+                  <input
+                    type="text"
+                    value={testName}
+                    onChange={(e) => setTestName(e.target.value)}
+                    placeholder="Enter test name"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  />
+                </div>
+                <div className="mb-6">
+                  <label className="block text-gray-700 mb-2">Level Count</label>
+                  <input
+                    value={levelCount}
+                    onChange={(e) => setLevelCount(parseInt(e.target.value))}
+                    type="number"
+                    placeholder="Enter Level Count"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  />
+                </div>
+                <div className="mb-6">
+                  <label className="block text-gray-700 mb-2">Instructions</label>
+                  <textarea
+                    value={instructions}
+                    onChange={(e) => setInstructions(e.target.value)}
+                    placeholder="Enter test instructions"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleCreateTest}
+                    className="bg-teal-600 text-white px-6 py-2 rounded-lg"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </>

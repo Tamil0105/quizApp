@@ -41,7 +41,7 @@ interface TestStore {
 
 const useStore = create<TestStore>((set) => ({
   test: null,
-activeStep:1,
+activeStep:0,
 setActiveStep:(activeStep:number)  => set({activeStep}),
   // Set the whole test object
   setTest: (test: Test) => set({ test }),
